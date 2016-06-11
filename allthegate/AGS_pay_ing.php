@@ -300,6 +300,7 @@ dog( __FILE__ );
 <input type=hidden name=rAquiNm value="<?=$agspay->GetResult("rAquiNm")?>">	<!-- (안심클릭,일반사용)매입사명 -->
 
 <!-- 계좌이체 결제 사용 변수 -->
+<input type=hidden name=ICHE_OUTACCTNO value="<?=$agspay->GetResult("ICHE_OUTACCTNO")?>">
 <input type=hidden name=ICHE_OUTBANKNAME value="<?=$agspay->GetResult("ICHE_OUTBANKNAME")?>">		<!-- 이체은행명 -->
 <input type=hidden name=ICHE_OUTBANKMASTER value="<?=$agspay->GetResult("ICHE_OUTBANKMASTER")?>">	<!-- 이체계좌예금주 -->
 <input type=hidden name=ICHE_AMOUNT value="<?=$agspay->GetResult("ICHE_AMOUNT")?>">					<!-- 이체금액 -->

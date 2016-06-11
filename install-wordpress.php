@@ -1,5 +1,5 @@
 <?php
-include_once "database-query.php";
+include_once "function.php";
 global $wpdb;
 $table_payment = $wpdb->prefix . 'payment';
 dog( "table_name: $table_payment");

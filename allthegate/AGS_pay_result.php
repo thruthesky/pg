@@ -1,4 +1,18 @@
 <?php
+/**
+ * @file AGS_pay_result.php
+ * @desc
+ *
+ * 		2016-06-11 By Mr. Song
+ *
+ * 		이 파일은 결제 처리 결과를 보여 준다.
+ *
+ * 		결제 성공, 실패, 입금대기(가상계좌) 중 하나를 보여 준다.
+ *
+ * 		이 페이지에서는 본문 내용만 간략하게 보여주므로,
+ *
+ * 		커스터마이징을 하는 경우, 상단/하단(전/후)의 디자인 추가가 필요하다.
+ */
 /**********************************************************************************************
 *
 * 파일명 : AGS_pay_result.php
@@ -10,7 +24,7 @@
 *
 **********************************************************************************************/
 
-dog( __FILE__ );
+
 
 //공통사용
 $AuthTy 		= trim( $_POST["AuthTy"] );				//결제형태
@@ -77,23 +91,7 @@ if($AGS_HASHDATA == $rAGS_HASHDATA){
 }
 
 ?>
-<html>
-<head>
-<title>올더게이트</title>
-<style type="text/css">
-<!--
-body { font-family:"돋움"; font-size:9pt; color:#000000; font-weight:normal; letter-spacing:0pt; line-height:180%; }
-td { font-family:"돋움"; font-size:9pt; color:#000000; font-weight:normal; letter-spacing:0pt; line-height:180%; }
-.clsright { padding-right:10px; text-align:right; }
-.clsleft { padding-left:10px; text-align:left; }
--->
-</style>
-<script language=javascript> // "지불처리중" 팝업창 닫기
-<!--
-var openwin = window.open("AGS_progress.html","popup","width=300,height=160");
-openwin.close();
--->
-</script>
+
 <script language=javascript>
 <!--
 /***********************************************************************************
@@ -129,28 +127,8 @@ function show_receipt()
 }
 -->
 </script>
-</head>
-<body topmargin=0 leftmargin=0 rightmargin=0 bottommargin=0>
-<table border=0 width=100% height=100% cellpadding=0 cellspacing=0>
-	<tr>
-		<td align=center>
-		<table width=400 border=0 cellpadding=0 cellspacing=0>
-			<tr>
-				<td><hr></td>
-			</tr>
-			<tr>
-				<td class=clsleft>지불 결과</td>
-			</tr>
-			<tr>
-				<td><hr></td>
-			</tr>
-			<tr>
-				<td>
-				<table width=400 border=0 cellpadding=0 cellspacing=0>
-					<tr>
-						<td class=clsright width=150>결제형태 : </td>
-						<td class=clsleft width=250>
-							<?php
+지불 결과<br>
+결제형태 : <?php
 
 							if($AuthTy == "card")
 							{
@@ -185,197 +163,70 @@ function show_receipt()
 								echo "가상계좌결제";
 							}
 							?>
-						</td>
-					</tr>
-					<tr>
-						<td class=clsright>상점아이디 : </td>
-						<td class=clsleft><?=$rStoreId?></td>
-					</tr>
-					<tr>
-						<td class=clsright>주문번호 : </td>
-						<td class=clsleft><?=$rOrdNo?></td>
-					</tr>
-					<tr>
-						<td class=clsright>주문자명 : </td>
-						<td class=clsleft><?=$rOrdNm?></td>
-					</tr>
-					<tr>
-						<td class=clsright>상품명 : </td>
-						<td class=clsleft><?=$rProdNm?></td>
-					</tr>
-					<tr>
-						<td class=clsright>결제금액 : </td>
-						<td class=clsleft><?=$rAmt?></td>
-					</tr>
-					<tr>
-						<td class=clsright>성공여부 : </td>
-						<td class=clsleft><?=$rSuccYn?></td>
-					</tr>
-					<tr>
-						<td class=clsright>처리메세지 : </td>
-						<td class=clsleft><?=$rResMsg?></td>
-					</tr>
-<?				if($AuthTy == "card" || $AuthTy == "virtual") { ?>
-					<tr>
-						<td class=clsright>승인시각 : </td>
-						<td class=clsleft><?=$rApprTm?></td>
-					</tr>
-<?				}
-				if($AuthTy == "card" && $rSuccYn == "y") {?>
-					<tr>
-						<td class=clsright>전문코드 : </td>
-						<td class=clsleft><?=$rBusiCd?></td>
-					</tr>
-					<tr>
-						<td class=clsright>승인번호 : </td>
-						<td class=clsleft><?=$rApprNo?></td>
-					</tr>
-					<tr>
-						<td class=clsright>카드사코드 : </td>
-						<td class=clsleft><?=$rCardCd?></td>
-					</tr>
-					<tr>
-						<td class=clsright>거래번호 : </td>
-						<td class=clsleft><?=$rDealNo?></td>
-					</tr>
-<?				}
-				if($AuthTy == "card" && ($SubTy == "visa3d" || $SubTy == "normal") && $rSuccYn == "y") {?>
-					<tr>
-						<td class=clsright>카드사명 : </td>
-						<td class=clsleft><?=$rCardNm?></td>
-					</tr>
-					<tr>
-						<td class=clsright>매입사코드 : </td>
-						<td class=clsleft><?=$rAquiCd?></td>
-					</tr>
-					<tr>
-						<td class=clsright>매입사명 : </td>
-						<td class=clsleft><?=$rAquiNm?></td>
-					</tr>
-					<tr>
-						<td class=clsright>가맹점번호 : </td>
-						<td class=clsleft><?=$rMembNo?></td>
-					</tr>					
-<?				}
-				if($AuthTy == "iche" ) {?>
-					<tr>
-						<td class=clsright>이체계좌은행명 : </td>
-						<td class=clsleft><?=$ICHE_OUTBANKNAME?><?=getCenter_cd($ICHE_OUTBANKNAME)?></td>
-					</tr>
-					<tr>
-						<td class=clsright>이체금액 : </td>
-						<td class=clsleft><?=$ICHE_AMOUNT?></td>
-					</tr>
-					<tr>
-						<td class=clsright>이체계좌소유주 : </td>
-						<td class=clsleft><?=$ICHE_OUTBANKMASTER?></td>
-					</tr>
-					<tr>
-						<td class=clsright>이지스에스크로(SEND_NO) : </td>
-						<td class=clsleft><?=$ES_SENDNO?></td>
-					</tr>
-<?				}
-				if($AuthTy == "hp" ) {?>
-					<tr>
-						<td class=clsright>핸드폰결제TID : </td>
-						<td class=clsleft><?=$rHP_TID?></td>
-					</tr>
-					<tr>
-						<td class=clsright>핸드폰결제날짜 : </td>
-						<td class=clsleft><?=$rHP_DATE?></td>
-					</tr>
-					<tr>
-						<td class=clsright>핸드폰결제핸드폰번호 : </td>
-						<td class=clsleft><?=$rHP_HANDPHONE?></td>
-					</tr>
-					<tr>
-						<td class=clsright>핸드폰결제통신사명 : </td>
-						<td class=clsleft><?=$rHP_COMPANY?></td>
-					</tr>
-<?				}
-				if($AuthTy == "ars" ) {?>
-					<tr>
-						<td class=clsright>ARS결제TID : </td>
-						<td class=clsleft><?=$rHP_TID?></td>
-					</tr>
-					<tr>
-						<td class=clsright>ARS결제날짜 : </td>
-						<td class=clsleft><?=$rHP_DATE?></td>
-					</tr>
-					<tr>
-						<td class=clsright>ARS결제전화번호 : </td>
-						<td class=clsleft><?=$rARS_PHONE?></td>
-					</tr>
-					<tr>
-						<td class=clsright>ARS결제통신사명 : </td>
-						<td class=clsleft><?=$rHP_COMPANY?></td>
-					</tr>
-<?				}
-				if($AuthTy == "virtual" ) {?>
-					<tr>
-						<td class=clsright>입금계좌번호 : </td>
-						<td class=clsleft><?=$rVirNo?></td>
-					</tr>
-                    <tr><!-- 은행코드(20) : 우리은행 -->
-						<td class=clsright>입금은행 : </td>
-						<td class=clsleft><?=getCenter_cd($VIRTUAL_CENTERCD)?></td>
-					</tr>
-                    <tr>
-					<!--올더게이트에 등록된 상점명으로 표기-------->
-						<td class=clsright>예금주명 : </td>
-						<td class=clsleft>(주)이지스엔터프라이즈</td>
-					</tr>
-					<tr>
-						<td class=clsright>이지스에스크로(SEND_NO) : </td>
-						<td class=clsleft><?=$ES_SENDNO?></td>
-					</tr>
-<?				}
-				if($AuthTy == "card" ) {?>
-					<tr>
-						<td class=clsright>영수증 :</td>
-						<!--영수증출력을위해서보내주는값-------------------->
+<br>
+상점아이디 : <?php echo $rStoreId?><br>
+주문번호 : <?php echo $rOrdNo?><br>
+주문자명 : <?php echo $rOrdNm?><br>
+상품명 : <?php echo $rProdNm?><br>
+결제금액 : <?php echo $rAmt?><br>
+성공여부 : <?php echo $rSuccYn?>
+처리메세지 : <?php echo $rResMsg?>
+<?php if($AuthTy == "card" || $AuthTy == "virtual") { ?>
+승인시각 : <?php echo $rApprTm?><br>
+<?php } ?>
+<?php if($AuthTy == "card" && $rSuccYn == "y") { ?>
+전문코드 : <?php echo $rBusiCd?><br>
+승인번호 : <?php echo $rApprNo?><br>
+카드사코드 : <?php echo $rCardCd?><br>
+거래번호 : <?php echo $rDealNo?><br>
+<?php } ?>
+<?php if($AuthTy == "card" && ($SubTy == "visa3d" || $SubTy == "normal") && $rSuccYn == "y") { ?>
+카드사명 : <?php echo $rCardNm?><br>
+매입사코드 : <?php echo $rAquiCd?><br>
+매입사명 : <?php echo $rAquiNm?><br>
+가맹점번호 : <?php echo $rMembNo?><br>
+<?php } ?>
+<?php if($AuthTy == "iche" ) { ?>
+이체계좌은행명 : <?php echo $ICHE_OUTBANKNAME?><?php echo getCenter_cd($ICHE_OUTBANKNAME)?><br>
+이체금액 : <?php echo $ICHE_AMOUNT?><br>
+이체계좌소유주 : <?php echo $ICHE_OUTBANKMASTER?><br>
+이지스에스크로(SEND_NO) : <?php echo $ES_SENDNO?><br>
+<?php } ?>
+<?php if($AuthTy == "hp" ) { ?>
+핸드폰결제TID : <?php echo $rHP_TID?><br>
+핸드폰결제날짜 : <?php echo $rHP_DATE?><br>
+핸드폰결제핸드폰번호 : <?php echo $rHP_HANDPHONE?><br>
+핸드폰결제통신사명 : <?php echo $rHP_COMPANY?><br>
+<?php } ?>
+<?php if($AuthTy == "ars" ) { ?>
+ARS결제TID : <?php echo $rHP_TID?><br>
+ARS결제날짜 : <?php echo $rHP_DATE?><br>
+ARS결제전화번호 : <?php echo $rARS_PHONE?><br>
+ARS결제통신사명 : <?php echo $rHP_COMPANY?><br>
+<?php } ?>
+<?php if($AuthTy == "virtual" ) { ?>
+입금계좌번호 : <?php echo $rVirNo?><br>
+<!-- 은행코드(20) : 우리은행 -->
+입금은행 : <?php echo getCenter_cd($VIRTUAL_CENTERCD)?>
+<!--올더게이트에 등록된 상점명으로 표기-------->
+예금주명 : (주)이지스엔터프라이즈<br>
+이지스에스크로(SEND_NO) : <?=$ES_SENDNO?><br>
+<?php } ?>
+<?php if($AuthTy == "card" ) { ?>
+영수증 : <!--영수증출력을위해서보내주는값-------------------->
 						<input type=hidden name=sRetailer_id value="<?=$rStoreId?>"><!--상점아이디-->
 						<input type=hidden name=approve value="<?=$rApprNo?>"><!---승인번호-->
 						<input type=hidden name=send_no value="<?=$rDealNo?>"><!--거래고유번호-->
 						<input type=hidden name=appr_tm value="<?=$rApprTm?>"><!--승인시각-->
 						<!--영수증출력을위해서보내주는값-------------------->
-						<td class=clsleft><input type="button" value="영수증" onclick="javascript:show_receipt();"></td>
-					</tr>
-					<tr>
-						<td colspan=2>&nbsp;</td>
-					</tr>
-					<tr>
-						<td align=center colspan=2>카드 이용명세서에 구입처가 <font color=red>이지스효성(주)</font>로 표기됩니다.</td>
-					</tr>
-<?				}	?>
-					<tr>
-						<td colspan="2"><?=$errResMsg?></td>
-					</tr>
-					<tr>
-						<td colspan="2">원본 해쉬 : <?=$AGS_HASHDATA?></td>
-					</tr>
-					<tr>
-						<td colspan="2">결과 해쉬 :<?=$rAGS_HASHDATA?></td>
-					</tr>
-					<tr>
-						<td colspan=2>&nbsp;</td>
-					</tr>
-					
-				</table>
-				</td>
-			</tr>
-			<tr>
-				<td><hr></td>
-			</tr>
-			<tr>
-				<td class=clsleft>Copyright  AEGIS ENTERPRISE.Co.,Ltd. All rights reserved.</td> 
-			</tr>
-		</table>
-		</td>
-	</tr>
-</table>
-</body>
-</html>
+						<input type="button" value="영수증" onclick="javascript:show_receipt();">
+		카드 이용명세서에 구입처가 <font color=red>이지스효성(주)</font>로 표기됩니다.<br>
+
+<?php } ?>
+<?php echo $errResMsg?><br>
+원본 해쉬 : <?php echo $AGS_HASHDATA?><br>
+결과 해쉬 : <?php echo $rAGS_HASHDATA?>
+
 <?
 	function getCenter_cd($VIRTUAL_CENTERCD){
 		if($VIRTUAL_CENTERCD == "39"){
