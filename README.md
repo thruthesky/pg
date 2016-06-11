@@ -8,5 +8,7 @@ Payment Gateway for Paypal, Allthegate, etc.
 # Supported Module
 
 * allthegate
+* paypal
+
 
 
