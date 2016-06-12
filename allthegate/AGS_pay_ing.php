@@ -14,16 +14,26 @@
 *   결제가 정상적으로 처리되지 않습니다.(수신 데이터 길이 에러 등의 사유)
 ********************************************************************************/
 
-
+global $payment;
+payment_resume_transaction( $_REQUEST['session_id'] );
 dog( __FILE__ );
+payment_log( [
+    'action' => 'AGS_pay_ing.php-begin-load-AGSLib.php',
+    'message' => "AGS_pay_ing.php begin. Loading AGSLib.php"
+] );
+
 	
 	/****************************************************************************
 	*
 	* [1] 라이브러리(AGSLib.php)를 인클루드 합니다.
 	*
 	****************************************************************************/
-	require ( PAYMENT_GATEWAY_DIR . "/lib/AGSLib.php");
+	require ( ALLTHEGATE_DIR . "lib/AGSLib.php");
 
+payment_log( [
+    'action' => 'AGS_pay_ing.php-new-agspay40',
+    'message' => "AGS_pay_ing.php >> After loading AGSLib.php, instanstiating new agspay40"
+] );
 
 	/****************************************************************************
 	*
@@ -38,7 +48,10 @@ dog( __FILE__ );
 	* [3] AGS_pay.html 로 부터 넘겨받을 데이타
 	*
 	****************************************************************************/
-
+payment_log( [
+    'action' => 'AGS_pay_ing.php-SetValue()s',
+    'message' => "AGS_pay_ing.php >> After instantiating, sets values by agspay->SetValue()"
+] );
 /*공통사용*/
 	//$agspay->SetValue("AgsPayHome","C:/htdocs/agspay");			//올더게이트 결제설치 디렉토리 (상점에 맞게 수정)
 	$agspay->SetValue("AgsPayHome", PAYMENT_LOG_PATH);			//올더게이트 결제설치 디렉토리 (상점에 맞게 수정)
@@ -155,6 +168,12 @@ dog( __FILE__ );
 	* [4] 올더게이트 결제서버로 결제를 요청합니다.
 	*
 	****************************************************************************/
+
+
+payment_log( [
+    'action' => 'AGS_pay_ing.php-startPay',
+    'message' => "AGS_pay_ing.php >> After setting values, it calls agspay-startPay() to communicate payment server."
+] );
 	$agspay->startPay();
 
 	
@@ -202,19 +221,37 @@ dog( __FILE__ );
 	*	ARS결제 TID : $agspay->GetResult("rHP_TID")
 	*
 	****************************************************************************/
-	
+
+
+payment_log( [
+    'action' => 'AGS_pay_ing.php-return-from-payment-server',
+    'message' => "AGS_pay_ing.php >> After communicating to payment server, it checks if the payment was sucess or not"
+] );
+
 	if($agspay->GetResult("rSuccYn") == "y")
-	{ 
+	{
 		if($agspay->GetResult("AuthTy") == "virtual"){
 			//가상계좌결제의 경우 입금이 완료되지 않은 입금대기상태(가상계좌 발급성공)이므로 상품을 배송하시면 안됩니다. 
-
-		}else{
+            payment_log( [
+                'action' => 'AGS_pay_ing.php-success-virtual',
+                'message' => "AGS_pay_ing.php >> Payment was not maid. Success was returned from server. But it was virtual payment. It must wait the user input."
+            ] );
+		}
+        else{
+            payment_log( [
+                'action' => 'AGS_pay_ing.php-success',
+                'message' => "AGS_pay_ing.php >> Payment was success."
+            ] );
 			// 결제성공에 따른 상점처리부분
 			//echo ("결제가 성공처리되었습니다. [" . $agspay->GetResult("rSuccYn")."]". $agspay->GetResult("rResMsg").". " );
 		}
 	}
 	else
 	{
+        payment_log( [
+            'action' => 'AGS_pay_ing.php-failed',
+            'message' => "AGS_pay_ing.php >> Payment failed."
+        ] );
 		// 결제실패에 따른 상점처리부분
 		//echo ("결제가 실패처리되었습니다. [" . $agspay->GetResult("rSuccYn")."]". $agspay->GetResult("rResMsg").". " );
 	}
@@ -267,12 +304,9 @@ dog( __FILE__ );
 	
 
 ?>
-<script>
-	window.addEventListener('load', function() {
-		frmAGS_pay_ing.submit();
-	});
-</script>
 <form name=frmAGS_pay_ing method=post action="<?php echo home_url()?>/enrollment?mode=AGS_pay_result">
+
+    <input type="hidden" name="session_id" value="<?php echo $payment['session_id']?>">
 
 <!-- 각 결제 공통 사용 변수 -->
 <input type=hidden name=AuthTy value="<?=$agspay->GetResult("AuthTy")?>">		<!-- 결제형태 -->
@@ -322,3 +356,16 @@ dog( __FILE__ );
 <input type=hidden name=ES_SENDNO value="<?=$agspay->GetResult("ES_SENDNO")?>">				<!-- 이지스에스크로(전문번호) -->
 
 </form>
+
+
+<?php
+payment_log( [
+    'action' => 'AGS_pay_ing.php-moving-to-AGS_pay_result.php',
+    'message' => "AGS_pay_ing.php >> After communicating to server, it moves to AGS_pay_result.php"
+] );
+?>
+<script>
+
+    frmAGS_pay_ing.submit();
+
+</script>

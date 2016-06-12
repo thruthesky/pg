@@ -5,11 +5,19 @@
 global $payment;
 
 
+payment_begin_transaction();
+
+if ( payment_check_input() ) {
+    payment_log('error on payment_check_input()');
+    return;
+}
+
+if ( payment_insert_info() ) {
+    payment_log('failed on payment_insert_info()');
+    return;
+}
 
 
-if ( payment_check_input() ) return;
-if ( payment_insert_info() ) return;
-if ( payment_insert_log() ) return;
 
 
 $AGS_HASHDATA = $payment['AGS_HASHDATA'];
@@ -222,6 +230,7 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
     -->
 </script>
 <form name="frmAGS_pay" method=post action="<?php echo home_url()?>/enrollment?mode=AGS_pay_ing">
+    <input type="hidden" name="session_id" value="<?php echo $payment['session_id']?>">
 <input type="hidden" name="StoreId" maxlength=20 value="<?php echo $payment['allthegate_account']?>">
 <input type="hidden" name="OrdNo" maxlength=40 value="<?php echo $payment['ID']?>">
 <input type="text" name="Job" maxlength=12 value="<?php echo $payment['method']?>">
@@ -348,6 +357,12 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
 <!-- 스크립트 및 플러그인에서 값을 설정하는 Hidden 필드  !!수정을 하시거나 삭제하지 마십시오-->
 
 </form>
+<?php
+payment_log( [
+    'action' => 'Opening ActiveX',
+    'message' => "AGS_pay.php >> Opening ActiveX for verification. Or if it just pass to AGS_pay_ing.php without verification if is's debug mode."
+] );
+?>
 <script>
     <?php if ( PAYMENT_DEBUG_NO_ACTIVEX ) { ?>
     // PAYMENT_DEBUG_NO_ACTIVEX 이 참이면 ActiveX 결제 확인 생략.

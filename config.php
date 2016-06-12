@@ -26,6 +26,7 @@ global $payment;
 // 참고 : 이 값은 관리자 페이지에서 수정이 가능 하도록 한다.
 define( 'PAYMENT_CMS', 'wordpress' );                               // CMS 를 기록한다. 2016년 현재, 'wordpress' 만 지원.
 define( 'PAYMENT_GATEWAY_DIR', dirname( __FILE__ ) . '/' ); // 필수 : 각 CMS 에 맞게 수정.
+define( 'ALLTHEGATE_DIR', PAYMENT_GATEWAY_DIR . 'allthegate/');
 $payment['MallUrl']             = "http://www.withcenter.kr";              // 쇼핑몰 홈페이지.
 $payment['MallPage']            = "/enrollment?mode=AGS_VirAccResult"; // 예제) /mall/AGS_VirAcctResult.php
 $payment['allthegate_account']  = "aegis";                           // 올더게이트 상점 아이디. 테스트 아이디는 "aegis"
@@ -54,7 +55,7 @@ if ( PAYMENT_DEBUG ) define( 'PAYMENT_LOG_LEVEL', 'DEBUG');     // 디버깅 시
 else define( 'PAYMENT_LOG_LEVEL', 'INFO');                      // DEBUG, INFO 등을 기록.
 
 define( 'PAYMENT_LOG', true );                                      // 결제 연동 간편 메뉴얼 참고. AGS_pay_ing.php 참고.
-define( 'PAYMENT_LOG_PATH', PAYMENT_GATEWAY_DIR );          // 이 폴더에 log 서브 폴더를 만들고 반드시 쓰기 퍼미션을 줘야 한다. AGSLib.php::PayLog::InitLog() 참고
+define( 'PAYMENT_LOG_PATH', rtrim(PAYMENT_GATEWAY_DIR,'/') );          // 이 폴더에 log 서브 폴더를 만들고 반드시 쓰기 퍼미션을 줘야 한다. AGSLib.php::PayLog::InitLog() 참고
 
 
 

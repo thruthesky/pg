@@ -1,4 +1,6 @@
-<?
+<?php
+
+
 /**
  * 파일명 : AGSLib.php
  * 최종수정일자 : 2009/05/22
@@ -7,6 +9,7 @@
  * Copyright AEGIS ENTERPRISE.Co.,Ltd. All rights reserved.	
  *
  */
+
 
 /* GLOBAL */
 define("PROGRAM", "AgsPay40");
@@ -1580,6 +1583,8 @@ class agspay40
 	{
 		$this->REQUEST[$key] = $val;
 	}
+
+
 
 	/*
 		결제데이터 Get                      

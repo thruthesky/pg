@@ -12,6 +12,10 @@
  * 		이 페이지에서는 본문 내용만 간략하게 보여주므로,
  *
  * 		커스터마이징을 하는 경우, 상단/하단(전/후)의 디자인 추가가 필요하다.
+ *
+ * @참고 : 테스트를 하는 경우, config.php 를 참고한다.
+ *
+ *
  */
 /**********************************************************************************************
 *
@@ -24,6 +28,56 @@
 *
 **********************************************************************************************/
 
+
+global $payment;
+payment_resume_transaction( $_REQUEST['session_id'] );
+
+// 테스트 용 : 변수 에러 처리.
+// 상점아이디와 주문번호가 없다면, 테스트하는 것으로 간주하고, 임시 데이터를 출력한다.
+// 주의 : 이전 AGS_pay_ing.php 에서 테스트 또는 디버깅 용 등으로 결제 서버와 연결이 안되거나 결제 정보가 올바르지 않으면,
+//          $_POST['rStoreId'] 의 값은 "Undefined index rStoreId ... " 와 같이 넘어 온다.
+// 참고 : https://docs.google.com/document/d/1u1FyzfWWuVf0D_U-QYPdwN95rWFv4xFdhB7Unvs4PA8/edit#heading=h.xoj6kfhfmvst
+//
+if (  empty( $_POST['rStoreId']) || strlen($_POST['rStoreId']) > 64 || strlen($_POST['rOrdNo']) > 32 ) {
+
+    $_POST['AuthTy'] = "AuthTy:Test";
+    $_POST['SubTy'] = 'SubTy:Test';
+
+
+    $_POST['rStoreId'] = "TestStoreID";
+    $_POST['rOrdNo'] = -1234;
+    $_POST['rOrdNm'] = 'Order Name';
+    $_POST['rAmt'] = 54321;
+    $_POST['rProdNm'] = 'Product Name';
+    $_POST['rSuccYn'] = 'Y';
+    $_POST['rResMsg'] = "실패 사유 : 테스트";
+    $_POST['rApprTm'] = "승인 시각 : 테스트";
+    $_POST['rBusiCd'] = "전문 코드 : 테스트";
+    $_POST['rApprNo'] = '승인 번호 : 테스트';
+    $_POST['rCardCd'] = '카드사 코드 : 테스트';
+    $_POST['rDealNo'] = '거래 고유 번호 : 테스트';
+    $_POST['rCardNm'] = '카드사 명 : 테스트';
+    $_POST['rMembNo'] = '가맹점 번호 : 테스트';
+    $_POST['rAquiCd'] = '매입사 코드 : 테스트';
+    $_POST['rAquiNm'] = '매입사 명 : 테스트';
+
+    $_POST['ICHE_OUTBANKNAME'] = '이체 계좌 은행명 : 테스트';
+    $_POST['ICHE_OUTACCTNO'] = '이체 계좌 번호 : 테스트';
+    $_POST['ICHE_OUTBANKMASTER'] = '이체 계좌 소유주 : 테스트';
+    $_POST['ICHE_AMOUNT'] = '이체 금액 : 테스트';
+    $_POST['rHP_TID'] = '핸드폰 결제 TID : 테스트';
+    $_POST['rHP_DATE'] = '핸드폰 결제 날짜 : 테스트';
+    $_POST['rHP_HANDPHONE'] = '핸드폰 결제 번호 : 테스트';
+    $_POST['rHP_COMPANY'] = '핸드폰 결제 통신사명(SKT, KTF, LGT) : 테스트';
+
+
+    $_POST['rARS_PHONE'] = 'ARS 결제 전화번호 : 테스트';
+    $_POST['rVirNo'] = '가상계좌번호 가상계좌추가 : 테스트';
+    $_POST['VIRTUAL_CENTERCD'] = '가상계좌 입금은행코드 : 테스트';
+    $_POST['ES_SENDNO'] = '이지스에스크로(전문번호) : 테스트';
+
+
+}
 
 
 //공통사용
@@ -65,6 +119,7 @@ $rHP_DATE 		= trim( $_POST["rHP_DATE"] );			//핸드폰결제날짜
 $rHP_HANDPHONE 	= trim( $_POST["rHP_HANDPHONE"] );		//핸드폰결제핸드폰번호
 $rHP_COMPANY 	= trim( $_POST["rHP_COMPANY"] );		//핸드폰결제통신사명(SKT,KTF,LGT)
 
+
 //ARS
 $rARS_PHONE = trim( $_POST["rARS_PHONE"] );				//ARS결제전화번호
 
@@ -89,6 +144,14 @@ if($AGS_HASHDATA == $rAGS_HASHDATA){
 }else{
 	$errResMsg   = "결재금액 변조 발생. 확인 바람";
 }
+
+
+
+payment_log( [
+    'action' => 'AGS_pay_result.php-displaying-result',
+    'message' => "AGS_pay_ing.php >> Displaying payment result."
+] );
+
 
 ?>
 
@@ -162,6 +225,8 @@ function show_receipt()
 							{
 								echo "가상계좌결제";
 							}
+
+
 							?>
 <br>
 상점아이디 : <?php echo $rStoreId?><br>
@@ -171,7 +236,9 @@ function show_receipt()
 결제금액 : <?php echo $rAmt?><br>
 성공여부 : <?php echo $rSuccYn?>
 처리메세지 : <?php echo $rResMsg?>
-<?php if($AuthTy == "card" || $AuthTy == "virtual") { ?>
+<?php
+
+if($AuthTy == "card" || $AuthTy == "virtual") { ?>
 승인시각 : <?php echo $rApprTm?><br>
 <?php } ?>
 <?php if($AuthTy == "card" && $rSuccYn == "y") { ?>
@@ -179,14 +246,19 @@ function show_receipt()
 승인번호 : <?php echo $rApprNo?><br>
 카드사코드 : <?php echo $rCardCd?><br>
 거래번호 : <?php echo $rDealNo?><br>
-<?php } ?>
+<?php
+
+}
+?>
 <?php if($AuthTy == "card" && ($SubTy == "visa3d" || $SubTy == "normal") && $rSuccYn == "y") { ?>
 카드사명 : <?php echo $rCardNm?><br>
 매입사코드 : <?php echo $rAquiCd?><br>
 매입사명 : <?php echo $rAquiNm?><br>
 가맹점번호 : <?php echo $rMembNo?><br>
 <?php } ?>
-<?php if($AuthTy == "iche" ) { ?>
+<?php
+
+if($AuthTy == "iche" ) { ?>
 이체계좌은행명 : <?php echo $ICHE_OUTBANKNAME?><?php echo getCenter_cd($ICHE_OUTBANKNAME)?><br>
 이체금액 : <?php echo $ICHE_AMOUNT?><br>
 이체계좌소유주 : <?php echo $ICHE_OUTBANKMASTER?><br>
@@ -228,6 +300,7 @@ ARS결제통신사명 : <?php echo $rHP_COMPANY?><br>
 결과 해쉬 : <?php echo $rAGS_HASHDATA?>
 
 <?
+
 	function getCenter_cd($VIRTUAL_CENTERCD){
 		if($VIRTUAL_CENTERCD == "39"){
 			echo "경남은행";

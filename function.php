@@ -13,6 +13,47 @@
 function payment_random_string() {
     return md5(uniqid(mt_rand(), true));
 }
+
+
+/**
+ * 이 함수는 결제 과정의 처음 부분에서 호출하면 된다.
+ *
+ * 고유한 랜덤 문자열을 만들어서 $payment['session_id'] 로 보관한다.
+ *
+ * 이렇게 하므로서 시작부터 끝가지 고유한 session_id 로 로그 추적이나 단계 추적이 가능하다.
+ *
+ *
+ */
+function payment_begin_transaction() {
+    global $payment;
+    $payment['session_id'] = payment_random_string();
+    payment_log([
+        'action' => 'payment_transaction_begin',
+        'message' => 'begin transaction'
+    ]);
+}
+
+/**
+ *
+ * AGS_pay.php 에서 payment_begin_transaction() 호출로 session_id 를 만든다.
+ *
+ * 다음 페이지로 옮길 때, FORM 으로 session_id 를 넘기고, 그 페이지에서 payemnt_resume_transaction( session_id ) 로 해서,
+ *
+ * 결제 정보를 계속 이어 갈 수 있도록 한다.
+ *
+ * 즉, 이 함수는 새로운 페이지가 실행 될 때 마다, 이 값을 지정 하면 된다.
+ *
+ * @param $session_id
+ */
+function payment_resume_transaction( $session_id ) {
+    global $payment;
+    $payment['session_id'] = $session_id;
+    payment_log([
+        'action' => 'payment_resume_transaction',
+        'message' => 'transaction resumes'
+    ]);
+}
+
 /**
  *
  * 각 CMS 의 회원 번호를 리턴한다.
@@ -79,7 +120,6 @@ function payment_check_input() {
  */
 function payment_insert_info() {
     global $payment;
-    $payment['session_id'] = payment_random_string();
     if ( PAYMENT_CMS == 'wordpress' ) {
 
         global $wpdb;
@@ -115,8 +155,33 @@ function payment_insert_info() {
  * 결제 로그를 기록한다.
  * @return int - 성공이면 0. 실패면 참.
  */
-function payment_insert_log() {
+function payment_insert_log( $data ) {
+    global $wpdb, $payment;
+    $table = $wpdb->prefix . 'payment_log';
+
+    if ( ! isset( $data['session_id'] ) ) {
+        $data['session_id'] = $payment['session_id'];
+    }
+
+    $q = "INSERT INTO $table ( stamp_create, session_id, action, message ) VALUES ( %d, %s, %s, %s)";
+    $prepare = $wpdb->prepare( $q,
+        time(),
+        $data['session_id'],
+        $data['action'],
+        $data['message']
+    );
+    dog( $prepare );
+    $re = $wpdb->query( $prepare );
+    if ( $re === false ) {
+        dog("Error on payment_insert_log()");
+        return -4005;
+    }
     return 0;
+}
+
+
+function payment_log( $data ) {
+    payment_insert_log( $data );
 }
 
 function create_table_payment( $table_name ) {
@@ -155,10 +220,12 @@ function create_table_payment_log( $table_name ) {
     $sql = <<<EOS
 CREATE TABLE $table_name (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    payment_id INT UNSIGNED NOT NULL DEFAULT 0,
+    action varchar(255) NOT NULL default '',
     message LONGTEXT,
+    session_id varchar(255) NOT NULL default '',
     stamp_create INT UNSIGNED NOT NULL DEFAULT 0,
-    PRIMARY KEY  (id)
+    PRIMARY KEY  (id),
+    KEY `session_id` (`session_id`)
 );
 EOS;
     return $sql;
