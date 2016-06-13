@@ -31,9 +31,9 @@ $payment['ags_logoimg_url'] = "http://www.allthegate.com/hyosung/images/aegis_lo
 
 
 /** ====== 옵션 ===== */
-define( 'PAYMENT_DEBUG', true );                                // true 이면 디버깅을 한다.
-define( 'PAYMENT_DEBUG_PAY_RESULT', true );                     // true 결제 성공. ( 디버깅 시에 사용 )
-define( 'PAYMENT_DEBUG_NO_ACTIVEX', true );                     // true 이면 ActiveX 결제 확인 생략
+define( 'PAYMENT_DEBUG', false );                                // true 이면 디버깅을 한다.
+define( 'PAYMENT_DEBUG_PAY_RESULT', false );                     // true 결제 성공. ( 디버깅 시에 사용 )
+define( 'PAYMENT_DEBUG_NO_ACTIVEX', false );                     // true 이면 ActiveX 결제 확인 생략
 if ( PAYMENT_DEBUG ) define( 'PAYMENT_LOG_LEVEL', 'DEBUG');     // 디버깅 시에는 자세한 기록을 남긴다.                         // DEBUG, INFO 등을 기록.
 else define( 'PAYMENT_LOG_LEVEL', 'INFO');                      // DEBUG, INFO 등을 기록.
 define( 'PAYMENT_LOG', true );                                      // 결제 연동 간편 메뉴얼 참고. AGS_pay_ing.php 참고.

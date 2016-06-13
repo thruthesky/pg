@@ -56,7 +56,7 @@ payment_log( [
 	//$agspay->SetValue("AgsPayHome","C:/htdocs/agspay");			//올더게이트 결제설치 디렉토리 (상점에 맞게 수정)
 	$agspay->SetValue("AgsPayHome", PAYMENT_LOG_PATH);			//올더게이트 결제설치 디렉토리 (상점에 맞게 수정)
 	$agspay->SetValue("StoreId",trim($_POST["StoreId"]));		//상점아이디
-	$agspay->SetValue("log", PAYMENT_DEBUG);							//true : 로그기록, false : 로그기록안함.
+	$agspay->SetValue("log", PAYMENT_LOG);							//true : 로그기록, false : 로그기록안함.
 	$agspay->SetValue("logLevel",PAYMENT_LOG_LEVEL);						//로그레벨 : DEBUG, INFO, WARN, ERROR, FATAL (해당 레벨이상의 로그만 기록됨)
 	$agspay->SetValue("UseNetCancel","true");					//true : 망취소 사용. false: 망취소 미사용
 	$agspay->SetValue("Type", "Pay");							//고정값(수정불가)
@@ -230,14 +230,14 @@ payment_log( [
 
 	if( ( PAYMENT_DEBUG && PAYMENT_DEBUG_PAY_RESULT ) || $agspay->GetResult("rSuccYn") == "y" )
 	{
-		if($agspay->GetResult("AuthTy") == "virtual"){
+		if( $agspay->GetResult("AuthTy") == "virtual" ) {
 			//가상계좌결제의 경우 입금이 완료되지 않은 입금대기상태(가상계좌 발급성공)이므로 상품을 배송하시면 안됩니다. 
             payment_log( [
                 'action' => 'AGS_pay_ing.php-success-virtual',
                 'message' => "AGS_pay_ing.php >> Payment was not maid. Success was returned from server. But it was virtual payment. It must wait the user input."
             ] );
 		}
-        else{
+        else {
             payment_log( [
                 'action' => 'AGS_pay_ing.php-success',
                 'message' => "AGS_pay_ing.php >> Payment was success."
@@ -337,7 +337,7 @@ payment_log( [
 <input type=hidden name=AGS_HASHDATA value="<?=$AGS_HASHDATA?>">				<!-- 암호화 HASHDATA -->
 
 <input type=hidden name=rSuccYn value="<?=$agspay->GetResult("rSuccYn")?>">	<!-- 성공여부 -->
-<input type=hidden name=rResMsg value="<?=$agspay->GetResult("rResMsg")?>">	<!-- 결과메시지 -->
+<input type=hidden name=rResMsg value="<?php echo iconv('EUC-KR', 'UTF-8', $agspay->GetResult("rResMsg"))?>">	<!-- 결과메시지 -->
 <input type=hidden name=rApprTm value="<?=$agspay->GetResult("rApprTm")?>">	<!-- 결제시간 -->
 
 <!-- 신용카드 결제 사용 변수 -->

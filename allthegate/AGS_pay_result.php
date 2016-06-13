@@ -173,6 +173,12 @@ payment_log( [
 ] );
 
 
+/*
+$rSuccYn = 'y'; // TEST
+$AuthTy = 'iche'; // TEST
+$VIRTUAL_CENTERCD = '04'; // TEST
+*/
+
 ?>
 
 <script language=javascript>
@@ -223,22 +229,39 @@ function show_receipt()
 		color:white;
 	}
 	.payment .header .title {
-		font-size: 1.6em;
+		margin-bottom: .4em;
+		font-size: 1.5em;
 	}
-
 
 	.payment .line {
 		overflow: auto;
+		overflow-y: hidden;
 	}
 	.payment .line > div {
 		margin: .2em 0;
-		padding: .4em .8em;
+		padding: .6em .8em;
 		float: left;
 	}
+
 	.payment .line .caption {
 		width: 20%;
 		background-color: #6e818a;
 		color: white;
+	}
+
+	.payment .line .text {
+		background-color: #dfdfdf;
+	}
+
+
+
+	.payment .line .text .print-receipt {
+		margin: 0;
+		padding: 1em;
+		background-color: #9a9ea9;
+		box-sizing: border-box;
+		color: white;
+		cursor: pointer;
 	}
 
 </style>
@@ -246,10 +269,30 @@ function show_receipt()
 
 	<div>
 		<div class="header">
-			<div class="title">수업료 지불 결과</div>
+			<div class="title">
+				<?php
+				if ( $AuthTy == 'card' ) {
+					echo "수업료 카드결재";
+					if ($rSuccYn == 'y') echo ' 성공';
+					else echo ' 실패';
+				}
+				else if ( $AuthTy == 'iche' ) {
+					echo "수업료 계좌이체";
+					if ($rSuccYn == 'y') echo ' 성공';
+					else echo ' 실패';
+				}
+				else if ( $AuthTy == 'virtual' ) {
+					echo "수업료 가상 계좌 결제(무통장)";
+				}
+				?>
+			</div>
 			<div class="desc">
-				회원님께서 요청하신 수업료 지불에 대한 결과입니다.<br />
-				문의 사항은 <?php opt('lms[phone_number]') ?> 로 해 주십시오.
+				<?php if ( $AuthTy == 'card' || $AuthTy == 'iche' ) { ?>
+					회원님께서 요청하신 수업료 지불에 대한 결과입니다.<br />
+				<?php } else if ( $AuthTy == 'virtual' ) { ?>
+						아래의 통장으로 입금하시면 수업료 결제가 됩니다.<br />
+				<?php } ?>
+
 			</div>
 		</div>
 
@@ -297,10 +340,13 @@ function show_receipt()
 				</div>
 			</div>
 
+		<?php /*
+
 		<div class="line">
 			<div class="caption">상점아이디</div>
 			<div class="text"><?php echo $rStoreId?></div>
 		</div>
+ */?>
 
 		<div class="line">
 			<div class="caption">주문번호</div>
@@ -312,16 +358,23 @@ function show_receipt()
 			<div class="text"> <?php echo $rOrdNm?></div>
 		</div>
 
+
+
+		<?php /*
 		<div class="line">
 			<div class="caption">상품명</div>
 			<div class="text"><?php echo $rProdNm?></div>
 		</div>
+ */?>
+
 
 		<div class="line">
 			<div class="caption">결제금액</div>
 			<div class="text"><?php echo $rAmt?></div>
 		</div>
 
+
+		<?php if( $rSuccYn != "y") { ?>
 		<div class="line">
 			<div class="caption">성공여부</div>
 			<div class="text"><?php echo $rSuccYn?></div>
@@ -331,59 +384,69 @@ function show_receipt()
 			<div class="caption">처리메세지</div>
 			<div class="text"><?php echo $rResMsg?></div>
 		</div>
+		<?php } ?>
 
-<?php
-
-if($AuthTy == "card" || $AuthTy == "virtual") { ?>
+<?php if($AuthTy == "card" || $AuthTy == "virtual") {
+	/*
+	?>
 		<div class="line">
 			<div class="caption">승인시각</div>
 			<div class="text"><?php echo $rApprTm?></div>
 			</div>
-<?php } ?>
-<?php if($AuthTy == "card" && $rSuccYn == "y") { ?>
-	<div class="line"><div class="capton">전문코드</div><div class="text"><?php echo $rBusiCd?></div></div>
-	<div class="line"><div class="capton">승인번호</div><div class="text"><?php echo $rApprNo?></div></div>
-	<div class="line"><div class="capton">카드사코드</div><div class="text"><?php echo $rCardCd?></div></div>
-	<div class="line"><div class="capton">거래번호</div><div class="text"><?php echo $rDealNo?></div></div>
+<?php */
+	 } ?>
+<?php if($AuthTy == "card" && $rSuccYn == "y") {
+	/*
+	?>
+
+	<div class="line"><div class="caption">전문코드</div><div class="text"><?php echo $rBusiCd?></div></div>
+	<div class="line"><div class="caption">승인번호</div><div class="text"><?php echo $rApprNo?></div></div>
+	<div class="line"><div class="caption">카드사코드</div><div class="text"><?php echo $rCardCd?></div></div>
+	<div class="line"><div class="caption">거래번호</div><div class="text"><?php echo $rDealNo?></div></div>
 	<?php
+	*/
 }
 ?>
 <?php if($AuthTy == "card" && ($SubTy == "visa3d" || $SubTy == "normal") && $rSuccYn == "y") { ?>
-	<div class="line"><div class="capton">카드사명</div><div class="text"><?php echo $rCardNm?></div></div>
-	<div class="line"><div class="capton">매입사코드</div><div class="text"><?php echo $rAquiCd?></div></div>
-	<div class="line"><div class="capton">매입사명</div><div class="text"><?php echo $rAquiNm?></div></div>
-	<div class="line"><div class="capton">가맹점번호</div><div class="text"><?php echo $rMembNo?></div></div>
+	<div class="line"><div class="caption">카드사명</div><div class="text"><?php echo $rCardNm?></div></div>
+	<div class="line"><div class="caption">매입사코드</div><div class="text"><?php echo $rAquiCd?></div></div>
+	<div class="line"><div class="caption">매입사명</div><div class="text"><?php echo $rAquiNm?></div></div>
+	<div class="line"><div class="caption">가맹점번호</div><div class="text"><?php echo $rMembNo?></div></div>
 <?php } ?>
 <?php
 
 if($AuthTy == "iche" ) { ?>
-	<div class="line"><div class="capton">이체계좌은행명</div><div class="text"><?php echo $ICHE_OUTBANKNAME?><?php echo getCenter_cd($ICHE_OUTBANKNAME)?></div></div>
-	<div class="line"><div class="capton">이체금액</div><div class="text"><?php echo $ICHE_AMOUNT?></div></div>
-	<div class="line"><div class="capton">이체계좌소유주</div><div class="text"><?php echo $ICHE_OUTBANKMASTER?></div></div>
-	<div class="line"><div class="capton">이지스에스크로(SEND_NO)</div><div class="text"><?php echo $ES_SENDNO?></div></div>
+	<div class="line"><div class="caption">이체계좌은행명</div><div class="text"><?php echo $ICHE_OUTBANKNAME?><?php echo getCenter_cd($ICHE_OUTBANKNAME)?></div></div>
+	<div class="line"><div class="caption">이체금액</div><div class="text"><?php echo $ICHE_AMOUNT?></div></div>
+	<div class="line"><div class="caption">이체계좌소유주</div><div class="text"><?php echo $ICHE_OUTBANKMASTER?></div></div>
+	<?php /*
+	<div class="line"><div class="caption">이지스에스크로(SEND_NO)</div><div class="text"><?php echo $ES_SENDNO?></div></div>
+ */?>
 <?php } ?>
 <?php if($AuthTy == "hp" ) { ?>
-	<div class="line"><div class="capton">핸드폰결제TID</div><div class="text"><?php echo $rHP_TID?></div></div>
-	<div class="line"><div class="capton">핸드폰결제날짜</div><div class="text"><?php echo $rHP_DATE?></div></div>
-	<div class="line"><div class="capton">핸드폰결제핸드폰번호</div><div class="text"><?php echo $rHP_HANDPHONE?></div></div>
-	<div class="line"><div class="capton">핸드폰결제통신사명</div><div class="text"><?php echo $rHP_COMPANY?></div></div>
+	<div class="line"><div class="caption">핸드폰결제TID</div><div class="text"><?php echo $rHP_TID?></div></div>
+	<div class="line"><div class="caption">핸드폰결제날짜</div><div class="text"><?php echo $rHP_DATE?></div></div>
+	<div class="line"><div class="caption">핸드폰결제핸드폰번호</div><div class="text"><?php echo $rHP_HANDPHONE?></div></div>
+	<div class="line"><div class="caption">핸드폰결제통신사명</div><div class="text"><?php echo $rHP_COMPANY?></div></div>
 <?php } ?>
 <?php if($AuthTy == "ars" ) { ?>
-		<div class="line"><div class="capton">ARS결제TID</div><div class="text"><?php echo $rHP_TID?></div></div>
-		<div class="line"><div class="capton">ARS결제날짜</div><div class="text"><?php echo $rHP_DATE?></div></div>
-		<div class="line"><div class="capton">ARS결제전화번호</div><div class="text"><?php echo $rARS_PHONE?></div></div>
-	<div class="line"><div class="capton">ARS결제통신사명</div><div class="text"><?php echo $rHP_COMPANY?></div></div>
+		<div class="line"><div class="caption">ARS결제TID</div><div class="text"><?php echo $rHP_TID?></div></div>
+		<div class="line"><div class="caption">ARS결제날짜</div><div class="text"><?php echo $rHP_DATE?></div></div>
+		<div class="line"><div class="caption">ARS결제전화번호</div><div class="text"><?php echo $rARS_PHONE?></div></div>
+	<div class="line"><div class="caption">ARS결제통신사명</div><div class="text"><?php echo $rHP_COMPANY?></div></div>
 <?php } ?>
 <?php if($AuthTy == "virtual" ) { ?>
-	<div class="line"><div class="capton">입금계좌번호</div><div class="text"><?php echo $rVirNo?></div></div>
+	<div class="line"><div class="caption">입금계좌번호</div><div class="text"><?php echo $rVirNo?></div></div>
 	<!-- 은행코드(20) : 우리은행 -->
-	<div class="line"><div class="capton">입금은행</div><div class="text"><?php echo getCenter_cd($VIRTUAL_CENTERCD)?></div></div>
+	<div class="line"><div class="caption">입금은행</div><div class="text"><?php echo getCenter_cd($VIRTUAL_CENTERCD)?></div></div>
 	<!--올더게이트에 등록된 상점명으로 표기-------->
-	<div class="line"><div class="capton">예금주명</div><div class="text">(주)이지스엔터프라이즈</div></div>
-	<div class="line"><div class="capton">이지스에스크로(SEND_NO)</div><div class="text"><?=$ES_SENDNO?></div></div>
+	<div class="line"><div class="caption">예금주명</div><div class="text">(주)이지스엔터프라이즈</div></div>
+	<?php /*
+	<div class="line"><div class="caption">이지스에스크로(SEND_NO)</div><div class="text"><?=$ES_SENDNO?></div></div>
+ */?>
 <?php } ?>
 
-<?php if($AuthTy == "card" ) { ?>
+<?php if( $rSuccYn == 'y' && $AuthTy == "card" ) { ?>
 		<div class="line">
 			<div class="caption">영수증</div>
 			<div class="text">
@@ -393,20 +456,22 @@ if($AuthTy == "iche" ) { ?>
 						<input type=hidden name=send_no value="<?=$rDealNo?>"><!--거래고유번호-->
 						<input type=hidden name=appr_tm value="<?=$rApprTm?>"><!--승인시각-->
 						<!--영수증출력을위해서보내주는값-------------------->
-						<input type="button" value="영수증" onclick="javascript:show_receipt();">
-		카드 이용명세서에 구입처가 <font color=red>이지스효성(주)</font>로 표기됩니다.
+
+
+				<span class="print-receipt" onclick="javascript:show_receipt();">영수증 출력하기</span>
+				이용명세서에 구입처가 <font color=red>이지스효성(주)</font>로 표기됩니다.
 			</div>
 		</div>
 
 <?php } ?>
-<?php
-if ( $errResMsg ) { ?>
+<?php if( $rSuccYn != "y" && $errResMsg ) { ?>
 		<div class="line"><div class="caption">에러메세지</div><div class="text"><?php echo $errResMsg?></div></div>
-		<?php }
-
-?>
+	<!--
 		<div class="line"><div class="caption">원본 해쉬</div><div class="text"><?php echo $AGS_HASHDATA?></div></div>
 		<div class="line"><div class="caption">결과 해쉬</div><div class="text"><?php echo $rAGS_HASHDATA?></div></div>
+		-->
+<?php } ?>
+
 </div>
 	</section>
 <?

@@ -1593,7 +1593,9 @@ class agspay40
 	{
 		if ( isset($this->RESULT[$name]) ) $result = $this->RESULT[$name];
 		else $result = '';
-		if( strlen($result) == 0 || $result == "") $result = $this->REQUEST[$name];
+		if( strlen($result) == 0 || $result == "") {
+			if ( isset( $this->REQUEST[$name] ) ) $result = $this->REQUEST[$name];
+		}
 		return $result;
 	}
 
@@ -1917,7 +1919,10 @@ class PayLog
 	{
 		if( $this->log == false ) return;
 
-		if ( !isset($this->REQUEST["Type"]) ) $this->REQUEST["Type"] = "Type-No-Set-By-Mr-Song-JaeHo"; //
+		if ( ! isset($this->REQUEST["Type"]) ) {
+			$this->REQUEST["Type"] = "";
+			// $this->REQUEST["Type"] = "Type-No-Set-By-Mr-Song-JaeHo";
+		} //
 
 		$Transaction_time=GetTime()-$this->starttime;
 		$this->WriteLog( INFO, "END ".$this->REQUEST["Type"]." ".$msg." Transaction time:[".round($Transaction_time,3)."sec]" );

@@ -164,7 +164,7 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
 
                     if(MakePayMessage(form) == true){
                         Disable_Flag(form);
-                        var openwin = window.open("AGS_progress.html","popup","width=300,height=160"); //"지불처리중"이라는 팝업창연결 부분
+                        // var openwin = window.open("AGS_progress.html","popup","width=300,height=160"); //"지불처리중"이라는 팝업창연결 부분
                         form.submit();
                     }
                     else{
