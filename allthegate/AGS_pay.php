@@ -241,146 +241,178 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
     }
     -->
 </script>
-<form name="frmAGS_pay" method=post action="<?php echo home_url()?>/enrollment?mode=AGS_pay_ing">
-    <input type="hidden" name="session_id" value="<?php echo $payment['session_id']?>">
-<input type="hidden" name="StoreId" maxlength=20 value="<?php echo $payment['allthegate_account']?>">
-<input type="hidden" name="OrdNo" maxlength=40 value="<?php echo $payment['ID']?>">
-<input type="text" name="Job" maxlength=12 value="<?php echo $payment['method']?>">
-<input type="text" name="Amt" maxlength=12 value="<?php echo $payment['amt']?>">
-<input type="text" name="StoreNm" value="<?php echo $payment['company_name']?>">
-<input type="text" name="ProdNm" maxlength=300 value="<?php echo $payment['item_name']?>">
-<input type="text" name="MallUrl" value="<?php echo $payment['MallUrl']?>">
-<input type="text" name="UserEmail" maxlength=50 value="<?php echo $payment['UserEmail']?>">
+<section class="AGS_pay">
+    <div>
+        <form name="frmAGS_pay" method=post action="<?php echo home_url()?>/enrollment?mode=AGS_pay_ing">
+            <input type="hidden" name="session_id" value="<?php echo $payment['session_id']?>">
+            <input type="hidden" name="StoreId" maxlength=20 value="<?php echo $payment['allthegate_id']?>">
+            <input type="hidden" name="OrdNo" maxlength=40 value="<?php echo $payment['ID']?>">
+            <input type="hidden" name="Job" maxlength=12 value="<?php echo $payment['method']?>">
+            <input type="hidden" name="Amt" maxlength=12 value="<?php echo $payment['amt']?>">
+            <input type="hidden" name="StoreNm" value="<?php echo $payment['company_name']?>">
+            <input type="hidden" name="ProdNm" maxlength=300 value="<?php echo $payment['allthegate_item_name']?>">
+            <input type="hidden" name="MallUrl" value="<?php echo $payment['MallUrl']?>">
+            <input type="hidden" name="UserEmail" maxlength=50 value="<?php echo $payment['UserEmail']?>">
 
-<!-- 결제창 좌측상단에 상점의 로고이미지(85 * 38)를 표시할 수 있습니다.  잘못된 값을 입력하거나 미입력시 이지스올더게이트의 로고가 표시됩니다. -->
-<input type="text" name=ags_logoimg_url maxlength=200 value="<?php echo $payment['ags_logoimg_url']?>">
+            <!-- 결제창 좌측상단에 상점의 로고이미지(85 * 38)를 표시할 수 있습니다.  잘못된 값을 입력하거나 미입력시 이지스올더게이트의 로고가 표시됩니다. -->
+            <input type="hidden" name=ags_logoimg_url maxlength=200 value="<?php echo $payment['ags_logoimg_url']?>">
 
-<!-- 제목은 1컨텐츠당 5자 이내이며, 상점명;상품명;결제금액;제공기간; 순으로 입력해 주셔야 합니다. 입력 예)업체명;판매상품;계산금액;제공기간; -->
-<input type="text" name="SubjectData" value="<?php echo $payment['SubjectData']?>">
-<input type="text" name="UserId" maxlength=20 value="<?php echo $payment['UserId']?>">
+            <!-- 제목은 1컨텐츠당 5자 이내이며, 상점명;상품명;결제금액;제공기간; 순으로 입력해 주셔야 합니다. 입력 예)업체명;판매상품;계산금액;제공기간; -->
+            <input type="hidden" name="SubjectData" value="<?php echo $payment['SubjectData']?>">
+            <input type="hidden" name="UserId" maxlength=20 value="<?php echo $payment['UserId']?>">
 
-<!-- 카드 & 가상 계좌 결재 용 변수 -->
-<input type="text" name="OrdNm" maxlength=40 value="<?php echo $payment['UserName']?>"><!--주문자 이름-->
-<input type="text" name="OrdPhone" maxlength=21 value="<?php echo $payment['UserPhone']?>"><!--주문자 연락처-->
-<input type="text" name="OrdAddr" maxlength=100 value="<?php echo $payment['UserAddress']?>"><!--주문자 주소-->
-<input type="text" name="RcpNm" maxlength=40 value="<?php echo $payment['RecvName']?>"><!-- 수진자명-->
-<input type="text" name="RcpPhone" maxlength=21 value="<?php echo $payment['RecvPhone']?>"><!-- 수신자 연락처 -->
-<input type="text" name="DlvAddr" maxlength=100 value="<?php echo $payment['RecvAddress']?>"><!--배송지 주소-->
-<input type="text" name="Remark" maxlength=350 value="<?php echo $payment['Remark']?>"><!--기타 요구사항 -->
-<input type=text style=width:300px name=CardSelect value=""><!--카드사 선택 : 특정 카드만 사용하고자 하는 경우. 빈 값을 입력하면 모든 카드사 사용. 카드사 코드는 매뉴얼에서 확인-->
-<!-- EO 카드 & 가상 계좌 결재 용 변수 -->
-<!-- 가상계좌 결제 용 변수 -->
-<input type="text" name="MallPage" value="/mall/AGS_VirAcctResult.php"><!-- 결제 입/출금 통보 URL. 도메인을 제외한 나머지 입력 -->
-<input type="text" name="VIRTUAL_DEPODT" value=""><!-- 입금 제한 일. 몇일까지 입금하라는 기간을 정해 줌. 최대 15일. 생략하면 기본 5일. 예) 20001122-->
-
-
-<!-- 핸드폰 결제 용 변수. 핸드폰 결제를 하지 않더라도 값을 넣어 준다. 안그러면 PHP 에서 변수 Undefiend 경고 에러가 난다. -->
-<input type=text name=HP_ID maxlength=10 value="">
-<input type=text name=HP_PWD maxlength=10 value="">
-<input type=text name=HP_SUBID maxlength=10 value="">
-<input type=text  name=ProdCode maxlength=10 value="">
-<input type="hidden" name=HP_UNITType value="1">
+            <!-- 카드 & 가상 계좌 결재 용 변수 -->
+            <input type="hidden" name="OrdNm" maxlength=40 value="<?php echo $payment['UserName']?>"><!--주문자 이름-->
+            <input type="hidden" name="OrdPhone" maxlength=21 value="<?php echo $payment['UserPhone']?>"><!--주문자 연락처-->
+            <input type="hidden" name="OrdAddr" maxlength=100 value="<?php echo $payment['UserAddress']?>"><!--주문자 주소-->
+            <input type="hidden" name="RcpNm" maxlength=40 value="<?php echo $payment['RecvName']?>"><!-- 수진자명-->
+            <input type="hidden" name="RcpPhone" maxlength=21 value="<?php echo $payment['RecvPhone']?>"><!-- 수신자 연락처 -->
+            <input type="hidden" name="DlvAddr" maxlength=100 value="<?php echo $payment['RecvAddress']?>"><!--배송지 주소-->
+            <input type="hidden" name="Remark" maxlength=350 value="<?php echo $payment['Remark']?>"><!--기타 요구사항 -->
+            <input type=hidden style=width:300px name=CardSelect value=""><!--카드사 선택 : 특정 카드만 사용하고자 하는 경우. 빈 값을 입력하면 모든 카드사 사용. 카드사 코드는 매뉴얼에서 확인-->
+            <!-- EO 카드 & 가상 계좌 결재 용 변수 -->
+            <!-- 가상계좌 결제 용 변수 -->
+            <input type="hidden" name="MallPage" value="<?php echo $payment['MallPage']?>"><!-- 결제 입/출금 통보 URL. 도메인을 제외한 나머지 입력 -->
+            <input type="hidden" name="VIRTUAL_DEPODT" value=""><!-- 입금 제한 일. 몇일까지 입금하라는 기간을 정해 줌. 최대 15일. 생략하면 기본 5일. 예) 20001122-->
 
 
-<!-- 스크립트 및 플러그인에서 값을 설정하는 Hidden 필드  !!수정을 하시거나 삭제하지 마십시오-->
+            <!-- 핸드폰 결제 용 변수. 핸드폰 결제를 하지 않더라도 값을 넣어 준다. 안그러면 PHP 에서 변수 Undefiend 경고 에러가 난다. -->
+            <input type=hidden name=HP_ID maxlength=10 value="<?php echo $payment['allthegate_cp_id']?>">
+            <input type=hidden name=HP_PWD maxlength=10 value="<?php echo $payment['allthegate_cp_pwd']?>">
+            <input type=hidden name=HP_SUBID maxlength=10 value="<?php echo $payment['allthegate_sub_cp_id']?>">
+            <input type=hidden  name=ProdCode maxlength=10 value="<?php echo $payment['allthegate_cp_code']?>">
+            <input type="hidden" name=HP_UNITType value="1">
 
-<!-- 각 결제 공통 사용 변수 -->
-<input type=hidden name=Flag value="">				<!-- 스크립트결제사용구분플래그 -->
-<input type=hidden name=AuthTy value="">			<!-- 결제형태 -->
-<input type=hidden name=SubTy value="">				<!-- 서브결제형태 -->
-<input type=hidden name=AGS_HASHDATA value="<?php echo $AGS_HASHDATA?>">	<!-- 암호화 HASHDATA -->
 
-<!-- 신용카드 결제 사용 변수 -->
-<input type=hidden name=DeviId value="">			<!-- (신용카드공통)		단말기아이디 -->
-<input type=hidden name=QuotaInf value="0">			<!-- (신용카드공통)		일반할부개월설정변수 -->
-<input type=hidden name=NointInf value="NONE">		<!-- (신용카드공통)		무이자할부개월설정변수 -->
-<input type=hidden name=AuthYn value="">			<!-- (신용카드공통)		인증여부 -->
-<input type=hidden name=Instmt value="">			<!-- (신용카드공통)		할부개월수 -->
-<input type=hidden name=partial_mm value="">		<!-- (ISP사용)			일반할부기간 -->
-<input type=hidden name=noIntMonth value="">		<!-- (ISP사용)			무이자할부기간 -->
-<input type=hidden name=KVP_RESERVED1 value="">		<!-- (ISP사용)			RESERVED1 -->
-<input type=hidden name=KVP_RESERVED2 value="">		<!-- (ISP사용)			RESERVED2 -->
-<input type=hidden name=KVP_RESERVED3 value="">		<!-- (ISP사용)			RESERVED3 -->
-<input type=hidden name=KVP_CURRENCY value="">		<!-- (ISP사용)			통화코드 -->
-<input type=hidden name=KVP_CARDCODE value="">		<!-- (ISP사용)			카드사코드 -->
-<input type=hidden name=KVP_SESSIONKEY value="">	<!-- (ISP사용)			암호화코드 -->
-<input type=hidden name=KVP_ENCDATA value="">		<!-- (ISP사용)			암호화코드 -->
-<input type=hidden name=KVP_CONAME value="">		<!-- (ISP사용)			카드명 -->
-<input type=hidden name=KVP_NOINT value="">			<!-- (ISP사용)			무이자/일반여부(무이자=1, 일반=0) -->
-<input type=hidden name=KVP_QUOTA value="">			<!-- (ISP사용)			할부개월 -->
-<input type=hidden name=CardNo value="">			<!-- (안심클릭,일반사용)	카드번호 -->
-<input type=hidden name=MPI_CAVV value="">			<!-- (안심클릭,일반사용)	암호화코드 -->
-<input type=hidden name=MPI_ECI value="">			<!-- (안심클릭,일반사용)	암호화코드 -->
-<input type=hidden name=MPI_MD64 value="">			<!-- (안심클릭,일반사용)	암호화코드 -->
-<input type=hidden name=ExpMon value="">			<!-- (일반사용)			유효기간(월) -->
-<input type=hidden name=ExpYear value="">			<!-- (일반사용)			유효기간(년) -->
-<input type=hidden name=Passwd value="">			<!-- (일반사용)			비밀번호 -->
-<input type=hidden name=SocId value="">				<!-- (일반사용)			주민등록번호/사업자등록번호 -->
+            <!-- 스크립트 및 플러그인에서 값을 설정하는 Hidden 필드  !!수정을 하시거나 삭제하지 마십시오-->
 
-<!-- 계좌이체 결제 사용 변수 -->
-<input type=hidden name=ICHE_OUTBANKNAME value="">	<!-- 이체계좌은행명 -->
-<input type=hidden name=ICHE_OUTACCTNO value="">	<!-- 이체계좌예금주주민번호 -->
-<input type=hidden name=ICHE_OUTBANKMASTER value=""><!-- 이체계좌예금주 -->
-<input type=hidden name=ICHE_AMOUNT value="">		<!-- 이체금액 -->
+            <!-- 각 결제 공통 사용 변수 -->
+            <input type=hidden name=Flag value="">				<!-- 스크립트결제사용구분플래그 -->
+            <input type=hidden name=AuthTy value="">			<!-- 결제형태 -->
+            <input type=hidden name=SubTy value="">				<!-- 서브결제형태 -->
+            <input type=hidden name=AGS_HASHDATA value="<?php echo $AGS_HASHDATA?>">	<!-- 암호화 HASHDATA -->
 
-<!-- 핸드폰 결제 사용 변수 -->
-<input type=hidden name=HP_SERVERINFO value="">		<!-- 서버정보 -->
-<input type=hidden name=HP_HANDPHONE value="">		<!-- 핸드폰번호 -->
-<input type=hidden name=HP_COMPANY value="">		<!-- 통신사명(SKT,KTF,LGT) -->
-<input type=hidden name=HP_IDEN value="">			<!-- 인증시사용 -->
-<input type=hidden name=HP_IPADDR value="">			<!-- 아이피정보 -->
+            <!-- 신용카드 결제 사용 변수 -->
+            <input type=hidden name=DeviId value="">			<!-- (신용카드공통)		단말기아이디 -->
+            <input type=hidden name=QuotaInf value="0">			<!-- (신용카드공통)		일반할부개월설정변수 -->
+            <input type=hidden name=NointInf value="NONE">		<!-- (신용카드공통)		무이자할부개월설정변수 -->
+            <input type=hidden name=AuthYn value="">			<!-- (신용카드공통)		인증여부 -->
+            <input type=hidden name=Instmt value="">			<!-- (신용카드공통)		할부개월수 -->
+            <input type=hidden name=partial_mm value="">		<!-- (ISP사용)			일반할부기간 -->
+            <input type=hidden name=noIntMonth value="">		<!-- (ISP사용)			무이자할부기간 -->
+            <input type=hidden name=KVP_RESERVED1 value="">		<!-- (ISP사용)			RESERVED1 -->
+            <input type=hidden name=KVP_RESERVED2 value="">		<!-- (ISP사용)			RESERVED2 -->
+            <input type=hidden name=KVP_RESERVED3 value="">		<!-- (ISP사용)			RESERVED3 -->
+            <input type=hidden name=KVP_CURRENCY value="">		<!-- (ISP사용)			통화코드 -->
+            <input type=hidden name=KVP_CARDCODE value="">		<!-- (ISP사용)			카드사코드 -->
+            <input type=hidden name=KVP_SESSIONKEY value="">	<!-- (ISP사용)			암호화코드 -->
+            <input type=hidden name=KVP_ENCDATA value="">		<!-- (ISP사용)			암호화코드 -->
+            <input type=hidden name=KVP_CONAME value="">		<!-- (ISP사용)			카드명 -->
+            <input type=hidden name=KVP_NOINT value="">			<!-- (ISP사용)			무이자/일반여부(무이자=1, 일반=0) -->
+            <input type=hidden name=KVP_QUOTA value="">			<!-- (ISP사용)			할부개월 -->
+            <input type=hidden name=CardNo value="">			<!-- (안심클릭,일반사용)	카드번호 -->
+            <input type=hidden name=MPI_CAVV value="">			<!-- (안심클릭,일반사용)	암호화코드 -->
+            <input type=hidden name=MPI_ECI value="">			<!-- (안심클릭,일반사용)	암호화코드 -->
+            <input type=hidden name=MPI_MD64 value="">			<!-- (안심클릭,일반사용)	암호화코드 -->
+            <input type=hidden name=ExpMon value="">			<!-- (일반사용)			유효기간(월) -->
+            <input type=hidden name=ExpYear value="">			<!-- (일반사용)			유효기간(년) -->
+            <input type=hidden name=Passwd value="">			<!-- (일반사용)			비밀번호 -->
+            <input type=hidden name=SocId value="">				<!-- (일반사용)			주민등록번호/사업자등록번호 -->
 
-<!-- ARS 결제 사용 변수 -->
-<input type=hidden name=ARS_PHONE value="">			<!-- ARS번호 -->
-<input type=hidden name=ARS_NAME value="">			<!-- 전화가입자명 -->
+            <!-- 계좌이체 결제 사용 변수 -->
+            <input type=hidden name=ICHE_OUTBANKNAME value="">	<!-- 이체계좌은행명 -->
+            <input type=hidden name=ICHE_OUTACCTNO value="">	<!-- 이체계좌예금주주민번호 -->
+            <input type=hidden name=ICHE_OUTBANKMASTER value=""><!-- 이체계좌예금주 -->
+            <input type=hidden name=ICHE_AMOUNT value="">		<!-- 이체금액 -->
 
-<!-- 가상계좌 결제 사용 변수 -->
-<input type=hidden name=ZuminCode value="">			<!-- 가상계좌입금자주민번호 -->
-<input type=hidden name=VIRTUAL_CENTERCD value="">	<!-- 가상계좌은행코드 -->
-<input type=hidden name=VIRTUAL_NO value="">		<!-- 가상계좌번호 -->
+            <!-- 핸드폰 결제 사용 변수 -->
+            <input type=hidden name=HP_SERVERINFO value="">		<!-- 서버정보 -->
+            <input type=hidden name=HP_HANDPHONE value="">		<!-- 핸드폰번호 -->
+            <input type=hidden name=HP_COMPANY value="">		<!-- 통신사명(SKT,KTF,LGT) -->
+            <input type=hidden name=HP_IDEN value="">			<!-- 인증시사용 -->
+            <input type=hidden name=HP_IPADDR value="">			<!-- 아이피정보 -->
 
-<input type=hidden name=mTId value="">
+            <!-- ARS 결제 사용 변수 -->
+            <input type=hidden name=ARS_PHONE value="">			<!-- ARS번호 -->
+            <input type=hidden name=ARS_NAME value="">			<!-- 전화가입자명 -->
 
-<!-- 에스크로 결제 사용 변수 -->
-<input type=hidden name=ES_SENDNO value="">			<!-- 에스크로전문번호 -->
+            <!-- 가상계좌 결제 사용 변수 -->
+            <input type=hidden name=ZuminCode value="">			<!-- 가상계좌입금자주민번호 -->
+            <input type=hidden name=VIRTUAL_CENTERCD value="">	<!-- 가상계좌은행코드 -->
+            <input type=hidden name=VIRTUAL_NO value="">		<!-- 가상계좌번호 -->
 
-<!-- 계좌이체(소켓) 결제 사용 변수 -->
-<input type=hidden name=ICHE_SOCKETYN value="">		<!-- 계좌이체(소켓) 사용 여부 -->
-<input type=hidden name=ICHE_POSMTID value="">		<!-- 계좌이체(소켓) 이용기관주문번호 -->
-<input type=hidden name=ICHE_FNBCMTID value="">		<!-- 계좌이체(소켓) FNBC거래번호 -->
-<input type=hidden name=ICHE_APTRTS value="">		<!-- 계좌이체(소켓) 이체 시각 -->
-<input type=hidden name=ICHE_REMARK1 value="">		<!-- 계좌이체(소켓) 기타사항1 -->
-<input type=hidden name=ICHE_REMARK2 value="">		<!-- 계좌이체(소켓) 기타사항2 -->
-<input type=hidden name=ICHE_ECWYN value="">		<!-- 계좌이체(소켓) 에스크로여부 -->
-<input type=hidden name=ICHE_ECWID value="">		<!-- 계좌이체(소켓) 에스크로ID -->
-<input type=hidden name=ICHE_ECWAMT1 value="">		<!-- 계좌이체(소켓) 에스크로결제금액1 -->
-<input type=hidden name=ICHE_ECWAMT2 value="">		<!-- 계좌이체(소켓) 에스크로결제금액2 -->
-<input type=hidden name=ICHE_CASHYN value="">		<!-- 계좌이체(소켓) 현금영수증발행여부 -->
-<input type=hidden name=ICHE_CASHGUBUN_CD value="">	<!-- 계좌이체(소켓) 현금영수증구분 -->
-<input type=hidden name=ICHE_CASHID_NO value="">	<!-- 계좌이체(소켓) 현금영수증신분확인번호 -->
+            <input type=hidden name=mTId value="">
 
-<!-- 텔래뱅킹-계좌이체(소켓) 결제 사용 변수 -->
-<input type=hidden name=ICHEARS_SOCKETYN value="">	<!-- 텔레뱅킹계좌이체(소켓) 사용 여부 -->
-<input type=hidden name=ICHEARS_ADMNO value="">		<!-- 텔레뱅킹계좌이체 승인번호 -->
-<input type=hidden name=ICHEARS_POSMTID value="">	<!-- 텔레뱅킹계좌이체 이용기관주문번호 -->
-<input type=hidden name=ICHEARS_CENTERCD value="">	<!-- 텔레뱅킹계좌이체 은행코드 -->
-<input type=hidden name=ICHEARS_HPNO value="">		<!-- 텔레뱅킹계좌이체 휴대폰번호 -->
+            <!-- 에스크로 결제 사용 변수 -->
+            <input type=hidden name=ES_SENDNO value="">			<!-- 에스크로전문번호 -->
 
-<!-- 스크립트 및 플러그인에서 값을 설정하는 Hidden 필드  !!수정을 하시거나 삭제하지 마십시오-->
+            <!-- 계좌이체(소켓) 결제 사용 변수 -->
+            <input type=hidden name=ICHE_SOCKETYN value="">		<!-- 계좌이체(소켓) 사용 여부 -->
+            <input type=hidden name=ICHE_POSMTID value="">		<!-- 계좌이체(소켓) 이용기관주문번호 -->
+            <input type=hidden name=ICHE_FNBCMTID value="">		<!-- 계좌이체(소켓) FNBC거래번호 -->
+            <input type=hidden name=ICHE_APTRTS value="">		<!-- 계좌이체(소켓) 이체 시각 -->
+            <input type=hidden name=ICHE_REMARK1 value="">		<!-- 계좌이체(소켓) 기타사항1 -->
+            <input type=hidden name=ICHE_REMARK2 value="">		<!-- 계좌이체(소켓) 기타사항2 -->
+            <input type=hidden name=ICHE_ECWYN value="">		<!-- 계좌이체(소켓) 에스크로여부 -->
+            <input type=hidden name=ICHE_ECWID value="">		<!-- 계좌이체(소켓) 에스크로ID -->
+            <input type=hidden name=ICHE_ECWAMT1 value="">		<!-- 계좌이체(소켓) 에스크로결제금액1 -->
+            <input type=hidden name=ICHE_ECWAMT2 value="">		<!-- 계좌이체(소켓) 에스크로결제금액2 -->
+            <input type=hidden name=ICHE_CASHYN value="">		<!-- 계좌이체(소켓) 현금영수증발행여부 -->
+            <input type=hidden name=ICHE_CASHGUBUN_CD value="">	<!-- 계좌이체(소켓) 현금영수증구분 -->
+            <input type=hidden name=ICHE_CASHID_NO value="">	<!-- 계좌이체(소켓) 현금영수증신분확인번호 -->
 
-</form>
+            <!-- 텔래뱅킹-계좌이체(소켓) 결제 사용 변수 -->
+            <input type=hidden name=ICHEARS_SOCKETYN value="">	<!-- 텔레뱅킹계좌이체(소켓) 사용 여부 -->
+            <input type=hidden name=ICHEARS_ADMNO value="">		<!-- 텔레뱅킹계좌이체 승인번호 -->
+            <input type=hidden name=ICHEARS_POSMTID value="">	<!-- 텔레뱅킹계좌이체 이용기관주문번호 -->
+            <input type=hidden name=ICHEARS_CENTERCD value="">	<!-- 텔레뱅킹계좌이체 은행코드 -->
+            <input type=hidden name=ICHEARS_HPNO value="">		<!-- 텔레뱅킹계좌이체 휴대폰번호 -->
+
+            <!-- 스크립트 및 플러그인에서 값을 설정하는 Hidden 필드  !!수정을 하시거나 삭제하지 마십시오-->
+
+        </form>
+
+        <?php
+        /**
+
+
+        <div>
+        <table>
+        <tr valign="top">
+        <td>
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        </td>
+        <td>
+        요청한 결제 처리중입니다.<br>
+        잠시만 기다려 주세요.
+        </td>
+        </tr>
+        </table>
+        </div>
+
+        <a href="javascript:history.go(-1)">돌아가기</a>
+         */
+
+        ?>
+
+    </div>
+</section>
 <?php
+
 payment_log( [
     'action' => 'Opening ActiveX',
     'message' => "AGS_pay.php >> Opening ActiveX for verification. Or if it just pass to AGS_pay_ing.php without verification if is's debug mode."
 ] );
 ?>
 <script>
-    <?php if ( PAYMENT_DEBUG_NO_ACTIVEX ) { ?>
+    <?php if ( PAYMENT_DEBUG && PAYMENT_DEBUG_NO_ACTIVEX ) { ?>
     // PAYMENT_DEBUG_NO_ACTIVEX 이 참이면 ActiveX 결제 확인 생략.
     frmAGS_pay.submit();
     <?php } else { ?>
-    Enable_Flag(frmAGS_pay);
-    Pay(frmAGS_pay);
+    /** 페이지 하단이 바로 출력되지 않기 때문에, setTimeout() 을 걸어 준다. */
+    setTimeout(function(){
+        Enable_Flag(frmAGS_pay);
+        Pay(frmAGS_pay);
+    }, 100);
     <?php } ?>
 </script>

@@ -228,7 +228,7 @@ payment_log( [
     'message' => "AGS_pay_ing.php >> After communicating to payment server, it checks if the payment was sucess or not"
 ] );
 
-	if($agspay->GetResult("rSuccYn") == "y")
+	if( ( PAYMENT_DEBUG && PAYMENT_DEBUG_PAY_RESULT ) || $agspay->GetResult("rSuccYn") == "y" )
 	{
 		if($agspay->GetResult("AuthTy") == "virtual"){
 			//가상계좌결제의 경우 입금이 완료되지 않은 입금대기상태(가상계좌 발급성공)이므로 상품을 배송하시면 안됩니다. 
@@ -242,6 +242,24 @@ payment_log( [
                 'action' => 'AGS_pay_ing.php-success',
                 'message' => "AGS_pay_ing.php >> Payment was success."
             ] );
+			function payment_success() {
+				global $wpdb, $payment;
+					$table = $wpdb->prefix . 'payment';
+					$q = "UPDATE $table SET stamp_finish=%d, result=%s WHERE session_id=%s";
+					$prepare = $wpdb->prepare( $q,
+							time(),
+							'Y',
+							$payment['session_id']
+					);
+					dog( $prepare );
+					$re = $wpdb->query( $prepare );
+					if ( $re === false ) {
+						dog("Database error on payment_success()");
+						return -4005;
+					}
+					return 0;
+			}
+			payment_success();
 			// 결제성공에 따른 상점처리부분
 			//echo ("결제가 성공처리되었습니다. [" . $agspay->GetResult("rSuccYn")."]". $agspay->GetResult("rResMsg").". " );
 		}

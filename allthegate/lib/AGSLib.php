@@ -1591,7 +1591,8 @@ class agspay40
 	*/
  	function GetResult( $name ) 
 	{
-		$result = $this->RESULT[$name];
+		if ( isset($this->RESULT[$name]) ) $result = $this->RESULT[$name];
+		else $result = '';
 		if( strlen($result) == 0 || $result == "") $result = $this->REQUEST[$name];
 		return $result;
 	}

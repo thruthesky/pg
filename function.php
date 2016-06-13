@@ -27,6 +27,7 @@ function payment_random_string() {
 function payment_begin_transaction() {
     global $payment;
     $payment['session_id'] = payment_random_string();
+    payment_load_allthegate_info();
 }
 
 /**
@@ -44,10 +45,42 @@ function payment_begin_transaction() {
 function payment_resume_transaction( $session_id ) {
     global $payment;
     $payment['session_id'] = $session_id;
+    payment_load_allthegate_info();
     payment_log([
         'action' => 'payment_resume_transaction',
         'message' => 'transaction resumes'
     ]);
+}
+
+
+/**
+ * 올더게이트 결제 정보를 로드한다.
+ *
+ * @note 상점 아이디, 핸드폰 결제 정보 등을 로드한다.
+ */
+function payment_load_allthegate_info() {
+    global $payment;
+
+
+    $id = get_opt('lms[allthegate_id]');
+    if ( ! empty($id) ) $payment['allthegate_id'] = $id;
+
+
+    $payment['allthegate_cp_id']                        = get_opt('lms[allthegate_cp_id]');
+    $payment['allthegate_cp_pwd']                       = get_opt('lms[allthegate_cp_pwd]');
+    $payment['allthegate_sub_cp_id']                    = get_opt('lms[allthegate_sub_cp_id]');
+    $payment['allthegate_cp_code']                      = get_opt('lms[allthegate_cp_code]');
+    $payment['allthegate_item_name']                    = get_opt('lms[allthegate_item_name]');
+
+    $payment['UserName'] = payment_get_user_name();
+    $payment['UserPhone'] = payment_get_user_phone();
+    $payment['UserAddress'] = payment_get_user_address();
+    $payment['RecvName'] = payment_get_user_name();
+    $payment['RecvPhone'] = payment_get_user_phone();
+    $payment['RecvAddress'] = payment_get_user_address();
+    $payment['Remark'] = '';
+
+    $payment['company_name'] = get_opt('lms[company_name]');
 }
 
 /**
@@ -63,6 +96,32 @@ function payment_get_user_id() {
         default                     : return 0;
     }
 }
+function payment_get_user_name() {
+    switch ( PAYMENT_CMS ) {
+        case 'wordpress'            : return user()->name;
+        default                     : return 0;
+    }
+}
+function payment_get_user_email() {
+    switch ( PAYMENT_CMS ) {
+        case 'wordpress'            : return user()->user_email;
+        default                     : return 0;
+    }
+}
+function payment_get_user_phone() {
+    switch ( PAYMENT_CMS ) {
+        case 'wordpress'            : return user()->mobile;
+        default                     : return 0;
+    }
+}
+function payment_get_user_address() {
+    switch ( PAYMENT_CMS ) {
+        case 'wordpress'            : return '';
+        default                     : return 0;
+    }
+}
+
+
 
 /**
  * 결제 폼 변수 입력 값 체크
@@ -72,23 +131,20 @@ function payment_get_user_id() {
 function payment_check_input() {
 
     global $payment;
-// min
-    if ( ! isset($_REQUEST['min']) || empty($_REQUEST['min']) ) {
-        jsAlert("수업 분을 선택하십시오.");
-        return -1;
-    }
-    $min = $_REQUEST['min'];
-    $payment['min'] = $min;
 
-    $amt = 0;
-    if ( $min == '25' ) $amt = 120000;
-    else if ( $min == '50' ) $amt = 240000;
-    if ( $amt == 0 ) {
-        jsAlert("수업료를 선택하십시오.");
+
+    // min & amount
+    if ( isset($_REQUEST['amount']) && $_REQUEST['amount'] ) {
+        $payment['amt'] = $_REQUEST['amount'];
+    }
+    else if ( isset($_REQUEST['amount_input']) || $_REQUEST['amount_input'] ) {
+        $payment['amt'] = $_REQUEST['amount_input'];
+    }
+    else {
+        jsAlert("수업 또는 수업료를 선택(입력)하십시오.");
         return -1;
     }
 
-    $payment['amt'] = $amt;
 
 // payment method
     if ( ! isset( $_REQUEST['method'] ) || empty($_REQUEST['method']) ) {
@@ -97,11 +153,12 @@ function payment_check_input() {
     }
     $payment['method'] = $_REQUEST['method'];
 
-
     $payment['values_from_user_form'] = serialize( $_REQUEST );
 
+
+
     $date = date("Y-m");
-    $payment['SubjectData'] = "$payment[company_name];$payment[item_name];$payment[amt];$date"; //업체명;판매상품;계산금액;2012.09.01 ~ 2012.09.30;
+    $payment['SubjectData'] = "$payment[company_name];$payment[allthegate_item_name];$payment[amt];$date"; //업체명;판매상품;계산금액;2012.09.01 ~ 2012.09.30;
     $payment['UserId'] = payment_get_user_id();
 
     return 0;
@@ -129,7 +186,7 @@ function payment_insert_info() {
             $q, payment_get_user_id(),
             $payment['session_id'],
             'allthegate',
-            $payment['allthegate_account'],
+            $payment['allthegate_id'],
             $payment['method'],
             'KWR',
             $payment['amt'], time(), $payment['values_from_user_form'] );
@@ -141,7 +198,7 @@ function payment_insert_info() {
             return -4002;
         }
         $payment['ID'] = $wpdb->insert_id;
-        $payment['AGS_HASHDATA'] = md5($payment['allthegate_account'] . $payment['ID'] . $payment['amt']);
+        $payment['AGS_HASHDATA'] = md5($payment['allthegate_id'] . $payment['ID'] . $payment['amt']);
         return 0;
     }
     return -1;
@@ -155,9 +212,14 @@ function payment_insert_log( $data ) {
     global $wpdb, $payment;
     $table = $wpdb->prefix . 'payment_log';
     if ( ! isset( $data['session_id'] ) ) {
-        $data['session_id'] = $payment['session_id'];
+        if ( isset($payment['session_id']) ) {
+            $data['session_id'] = $payment['session_id'];
+        }
+        else {
+            jsAlert("No session_id");
+            exit;
+        }
     }
-
     $q = "INSERT INTO $table ( stamp_create, session_id, action, message ) VALUES ( %d, %s, %s, %s)";
     $prepare = $wpdb->prepare( $q,
         time(),
