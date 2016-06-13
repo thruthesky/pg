@@ -6,14 +6,26 @@ global $payment;
 
 
 payment_begin_transaction();
+payment_log([
+    'action' => 'AGS_pay.php-payment_transaction_begin',
+    'message' => 'Begin transaction'
+]);
 
 if ( payment_check_input() ) {
-    payment_log('error on payment_check_input()');
+    payment_log( [
+        'action' => 'AGS_pay.php-payment-check-input-error',
+        'message' => 'error on payment_check_input()'
+    ] );
     return;
 }
 
 if ( payment_insert_info() ) {
-    payment_log('failed on payment_insert_info()');
+
+    payment_log( [
+        'action' => 'AGS_pay.php-payment-insert-info-error',
+        'message' => 'failed on payment_insert_info()'
+    ] );
+
     return;
 }
 

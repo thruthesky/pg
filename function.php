@@ -27,10 +27,6 @@ function payment_random_string() {
 function payment_begin_transaction() {
     global $payment;
     $payment['session_id'] = payment_random_string();
-    payment_log([
-        'action' => 'payment_transaction_begin',
-        'message' => 'begin transaction'
-    ]);
 }
 
 /**
@@ -137,7 +133,7 @@ function payment_insert_info() {
             $payment['method'],
             'KWR',
             $payment['amt'], time(), $payment['values_from_user_form'] );
-        di($prepare);
+        //di($prepare);
         $re = $wpdb->query( $prepare );
 
         if ( $re === false ) {
@@ -158,7 +154,6 @@ function payment_insert_info() {
 function payment_insert_log( $data ) {
     global $wpdb, $payment;
     $table = $wpdb->prefix . 'payment_log';
-
     if ( ! isset( $data['session_id'] ) ) {
         $data['session_id'] = $payment['session_id'];
     }
