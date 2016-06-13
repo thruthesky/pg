@@ -25,7 +25,6 @@ global $payment;
 /** ====== 필수 ===== */
 // 참고 : 이 값은 관리자 페이지에서 수정이 가능 하도록 한다.
 define( 'PAYMENT_CMS', 'wordpress' );                               // CMS 를 기록한다. 2016년 현재, 'wordpress' 만 지원.
-define( 'PAYMENT_GATEWAY_DIR', dirname( __FILE__ ) . '/' ); // 필수 : 각 CMS 에 맞게 수정.
 define( 'ALLTHEGATE_DIR', PAYMENT_GATEWAY_DIR . 'allthegate/');
 $payment['MallUrl']             = "http://www.withcenter.kr";              // 쇼핑몰 홈페이지.
 $payment['MallPage']            = "/enrollment?mode=AGS_VirAccResult"; // 예제) /mall/AGS_VirAcctResult.php
