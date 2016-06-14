@@ -462,7 +462,7 @@ if($AuthTy == "iche" ) { ?>
 	<!-- 은행코드(20) : 우리은행 -->
 	<div class="line"><div class="caption">입금은행</div><div class="text"><?php echo getCenter_cd($VIRTUAL_CENTERCD)?></div></div>
 	<!--올더게이트에 등록된 상점명으로 표기-------->
-	<div class="line"><div class="caption">예금주명</div><div class="text">(주)이지스엔터프라이즈</div></div>
+	<div class="line"><div class="caption">예금주명</div><div class="text">온라인영어</div></div>
 	<?php /*
 	<div class="line"><div class="caption">이지스에스크로(SEND_NO)</div><div class="text"><?=$ES_SENDNO?></div></div>
  */?>
