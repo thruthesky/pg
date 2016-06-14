@@ -7,6 +7,7 @@
 
 
 payment_log( [
+    'session_id' => 'no-session-id-bcause-virtual',
     'action' => 'AGS_VirAcctResult.php-begin',
     'message' => serialize($_POST),
 ] );

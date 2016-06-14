@@ -62,5 +62,6 @@ $payment['Remark'] = "";                                      // 기타 요구 �
 
 
 /** ============ 변경하지 말아야 할 값 ============== */
-$payment['MallPage']            = "/enrollment?mode=AGS_VirAccResult"; // 예제) /mall/AGS_VirAcctResult.php
+$payment['MallPage']            = "/enrollment?mode=AGS_VirtAccResult&layout=no"; // 예제) /mall/AGS_VirAcctResult.php
+
 
