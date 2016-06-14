@@ -372,11 +372,42 @@ else {
 
             <!-- 스크립트 및 플러그인에서 값을 설정하는 Hidden 필드  !!수정을 하시거나 삭제하지 마십시오-->
 
-            <?php if ( $error ) { ?>
-                <div><?php echo $error ?></div>
-            <?php } ?>
-            <div>금액: <?php echo $payment['amt']?></div>
-            <input type="button" value="지불요청" onclick="javascript:Pay(frmAGS_pay);">
+
+
+            <style scoped>
+                .pay-buttons {
+                    display: block;
+                    float: right;
+                    margin: 1em 0;
+                    width: 320px;
+                }
+                .total {
+                    padding: .4em;
+                    background-color: #00a0d2;
+                    color: white;
+                    font-size: 1.2em;
+                    font-family: "Malgun Gothic", serif;
+                }
+                .pay-button input {
+                    margin: .4em 0 0 0;
+                    background-color: #4f160d;
+                    padding: .4em;
+                    width: 100%;
+                    box-sizing: border-box;
+                    border: 0;
+                    color: white;
+                    font-size: 1.2em;
+                    font-family: "Malgun Gothic", serif;
+                }
+            </style>
+            <nav class="pay-buttons">
+                <?php if ( $error ) { ?>
+                    <div><?php echo $error ?></div>
+                <?php } ?>
+
+                <div class="total"><?php _text('Payment Total : ')?> <?php echo number_format($payment['amt'])?></div>
+            <div class="pay-button"><input type="button" value="<?php _text('Pay Now')?>" onclick="javascript:Pay(frmAGS_pay);"></div>
+            </nav>
 
         </form>
 
