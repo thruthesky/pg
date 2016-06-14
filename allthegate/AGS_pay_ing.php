@@ -251,23 +251,6 @@ payment_log( [
                 'action' => 'AGS_pay_ing.php-success',
                 'message' => "AGS_pay_ing.php >> Payment was success."
             ] );
-			function payment_success() {
-				global $wpdb, $payment;
-					$table = $wpdb->prefix . 'payment';
-					$q = "UPDATE $table SET stamp_finish=%d, result=%s WHERE session_id=%s";
-					$prepare = $wpdb->prepare( $q,
-							time(),
-							'Y',
-							$payment['session_id']
-					);
-					dog( $prepare );
-					$re = $wpdb->query( $prepare );
-					if ( $re === false ) {
-						dog("Database error on payment_success()");
-						return -4005;
-					}
-					return 0;
-			}
 			payment_success();
 			// 결제성공에 따른 상점처리부분
 			//echo ("결제가 성공처리되었습니다. [" . $agspay->GetResult("rSuccYn")."]". $agspay->GetResult("rResMsg").". " );

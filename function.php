@@ -245,6 +245,40 @@ function payment_insert_log( $data ) {
 }
 
 
+/**
+ *
+ * 결제에 성공했으면 그 결과를 DB 에 저장한다.
+ *
+ * 기본적으로 $payment 정보를 받아서 저장하지만, 가상 계좌인 경우에는 session_id 값을 전달 받지 못하므로 $id 값을 받는다.
+ *
+ * @return int
+ *
+ *
+ */
+function payment_success( $id = 0 ) {
+    global $wpdb, $payment;
+    $table = $wpdb->prefix . 'payment';
+    if ( $id ) {
+        $q = "UPDATE $table SET stamp_finish=%d, result=%s WHERE id=%d";
+        $cond_value = $id;
+    }
+    else {
+        $q = "UPDATE $table SET stamp_finish=%d, result=%s WHERE session_id=%s";
+        $cond_value = $payment['session_id'];
+    }
+    $prepare = $wpdb->prepare( $q,
+        time(),
+        'Y',
+        $cond_value
+    );
+    dog( $prepare );
+    $re = $wpdb->query( $prepare );
+    if ( $re === false ) {
+        dog("Database error on payment_success()");
+        return -4005;
+    }
+    return 0;
+}
 
 function payment_log( $data ) {
     payment_insert_log( $data );
