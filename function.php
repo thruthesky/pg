@@ -210,6 +210,11 @@ function payment_insert_info() {
     return -1;
 }
 
+function payment_list() {
+
+}
+
+
 /**
  * 결제 로그를 기록한다.
  * @return int - 성공이면 0. 실패면 참.
@@ -241,6 +246,7 @@ function payment_insert_log( $data ) {
     }
     return 0;
 }
+
 
 
 function payment_log( $data ) {

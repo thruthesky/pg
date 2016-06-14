@@ -386,6 +386,7 @@ payment_log( [
     'action' => 'AGS_pay_ing.php-moving-to-AGS_pay_result.php',
     'message' => "AGS_pay_ing.php >> After communicating to server, it moves to AGS_pay_result.php"
 ] );
+return;
 ?>
 <script>
 
