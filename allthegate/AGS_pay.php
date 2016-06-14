@@ -162,6 +162,7 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
                     if(form.DeviId.value == "9000400002")
                         form.NointInf.value = "ALL";
 
+
                     if(MakePayMessage(form) == true){
                         Disable_Flag(form);
                         // var openwin = window.open("AGS_progress.html","popup","width=300,height=160"); //"지불처리중"이라는 팝업창연결 부분
@@ -250,7 +251,7 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
             <input type="hidden" name="Job" maxlength=12 value="<?php echo $payment['method']?>">
             <input type="hidden" name="Amt" maxlength=12 value="<?php echo $payment['amt']?>">
             <input type="hidden" name="StoreNm" value="<?php echo $payment['company_name']?>">
-            <input type="hidden" name="ProdNm" maxlength=300 value="<?php echo $payment['allthegate_item_name']?>">
+            <input type="hidden" name="ProdNm" maxlength=300 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['allthegate_item_name'])?>">
             <input type="hidden" name="MallUrl" value="<?php echo $payment['MallUrl']?>">
             <input type="hidden" name="UserEmail" maxlength=50 value="<?php echo $payment['UserEmail']?>">
 
@@ -258,17 +259,17 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
             <input type="hidden" name=ags_logoimg_url maxlength=200 value="<?php echo $payment['ags_logoimg_url']?>">
 
             <!-- 제목은 1컨텐츠당 5자 이내이며, 상점명;상품명;결제금액;제공기간; 순으로 입력해 주셔야 합니다. 입력 예)업체명;판매상품;계산금액;제공기간; -->
-            <input type="hidden" name="SubjectData" value="<?php echo $payment['SubjectData']?>">
+            <input type="hidden" name="SubjectData" value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['SubjectData'])?>">
             <input type="hidden" name="UserId" maxlength=20 value="<?php echo $payment['UserId']?>">
 
             <!-- 카드 & 가상 계좌 결재 용 변수 -->
-            <input type="hidden" name="OrdNm" maxlength=40 value="<?php echo $payment['UserName']?>"><!--주문자 이름-->
+            <input type="hidden" name="OrdNm" maxlength=40 value="<?php echo payment_get_user_id() //iconv('UTF-8', 'EUC-KR', $payment['UserName'])?>"><!--주문자 이름-->
             <input type="hidden" name="OrdPhone" maxlength=21 value="<?php echo $payment['UserPhone']?>"><!--주문자 연락처-->
-            <input type="hidden" name="OrdAddr" maxlength=100 value="<?php echo $payment['UserAddress']?>"><!--주문자 주소-->
-            <input type="hidden" name="RcpNm" maxlength=40 value="<?php echo $payment['RecvName']?>"><!-- 수진자명-->
+            <input type="hidden" name="OrdAddr" maxlength=100 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['UserAddress'])?>"><!--주문자 주소-->
+            <input type="hidden" name="RcpNm" maxlength=40 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['RecvName'])?>"><!-- 수진자명-->
             <input type="hidden" name="RcpPhone" maxlength=21 value="<?php echo $payment['RecvPhone']?>"><!-- 수신자 연락처 -->
-            <input type="hidden" name="DlvAddr" maxlength=100 value="<?php echo $payment['RecvAddress']?>"><!--배송지 주소-->
-            <input type="hidden" name="Remark" maxlength=350 value="<?php echo $payment['Remark']?>"><!--기타 요구사항 -->
+            <input type="hidden" name="DlvAddr" maxlength=100 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['RecvAddress'])?>"><!--배송지 주소-->
+            <input type="hidden" name="Remark" maxlength=350 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['Remark'])?>"><!--기타 요구사항 -->
             <input type=hidden style=width:300px name=CardSelect value=""><!--카드사 선택 : 특정 카드만 사용하고자 하는 경우. 빈 값을 입력하면 모든 카드사 사용. 카드사 코드는 매뉴얼에서 확인-->
             <!-- EO 카드 & 가상 계좌 결재 용 변수 -->
             <!-- 가상계좌 결제 용 변수 -->

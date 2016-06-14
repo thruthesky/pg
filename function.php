@@ -90,9 +90,15 @@ function payment_load_allthegate_info() {
  * @return int - 회원번호
  *
  */
-function payment_get_user_id() {
+function payment_get_user_no() {
     switch ( PAYMENT_CMS ) {
         case 'wordpress'            : return wp_get_current_user()->ID;
+        default                     : return 0;
+    }
+}
+function payment_get_user_id() {
+    switch ( PAYMENT_CMS ) {
+        case 'wordpress'            : return wp_get_current_user()->user_login;
         default                     : return 0;
     }
 }
@@ -183,7 +189,7 @@ function payment_insert_info() {
               (user_id, session_id, paygate, paygate_account, method, currency, amount, stamp_create, values_from_user_form)
               VALUES ( %d, %s, %s, %s, %s, %s, %d, %d, %s )";
         $prepare = $wpdb->prepare(
-            $q, payment_get_user_id(),
+            $q, payment_get_user_no(),
             $payment['session_id'],
             'allthegate',
             $payment['allthegate_id'],

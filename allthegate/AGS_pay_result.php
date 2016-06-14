@@ -353,19 +353,28 @@ function show_receipt()
 			<div class="text"><?php echo $rOrdNo?></div>
 		</div>
 
+
+		<?php /*
 		<div class="line">
 			<div class="caption">주문자명</div>
 			<div class="text"> <?php echo $rOrdNm?></div>
 		</div>
+ */ ?>
+
+
+		<div class="line">
+			<div class="caption">주문자 명</div>
+			<div class="text"> <?php echo payment_get_user_name()?></div>
+		</div>
 
 
 
-		<?php /*
+
 		<div class="line">
 			<div class="caption">상품명</div>
 			<div class="text"><?php echo $rProdNm?></div>
 		</div>
- */?>
+
 
 
 		<div class="line">

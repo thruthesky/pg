@@ -14,6 +14,7 @@
 *   결제가 정상적으로 처리되지 않습니다.(수신 데이터 길이 에러 등의 사유)
 ********************************************************************************/
 
+
 global $payment;
 payment_resume_transaction( $_REQUEST['session_id'] );
 dog( __FILE__ );
@@ -22,7 +23,10 @@ payment_log( [
     'message' => "AGS_pay_ing.php begin. Loading AGSLib.php"
 ] );
 
-	
+
+
+
+
 	/****************************************************************************
 	*
 	* [1] 라이브러리(AGSLib.php)를 인클루드 합니다.
@@ -377,6 +381,7 @@ payment_log( [
 
 
 <?php
+
 payment_log( [
     'action' => 'AGS_pay_ing.php-moving-to-AGS_pay_result.php',
     'message' => "AGS_pay_ing.php >> After communicating to server, it moves to AGS_pay_result.php"
