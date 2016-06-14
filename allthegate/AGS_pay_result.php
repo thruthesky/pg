@@ -228,6 +228,7 @@ function show_receipt()
 		background-color: #563d7c;
 		color:white;
 	}
+
 	.payment .header .title {
 		margin-bottom: .4em;
 		font-size: 1.5em;
@@ -237,6 +238,7 @@ function show_receipt()
 		overflow: auto;
 		overflow-y: hidden;
 	}
+
 	.payment .line > div {
 		margin: .2em 0;
 		padding: .6em .8em;
@@ -251,8 +253,8 @@ function show_receipt()
 
 	.payment .line .text {
 		background-color: #dfdfdf;
+		min-width: 240px;
 	}
-
 
 
 	.payment .line .text .print-receipt {
@@ -282,20 +284,23 @@ function show_receipt()
 					else echo ' 실패';
 				}
 				else if ( $AuthTy == 'virtual' ) {
-					echo "수업료 가상 계좌 결제(무통장)";
+					echo "수업료 입금 대기";
 				}
 				?>
 			</div>
 			<div class="desc">
 				<?php if ( $AuthTy == 'card' || $AuthTy == 'iche' ) { ?>
 					회원님께서 요청하신 수업료 지불에 대한 결과입니다.<br />
+					아래의 통장으로 입금하시면 수업료 결제가 됩니다.<br />
 				<?php } else if ( $AuthTy == 'virtual' ) { ?>
-						아래의 통장으로 입금하시면 수업료 결제가 됩니다.<br />
+						수업료 결제가 아직 되지 않았습니다.<br>
+					아래의 통장으로 입금하시면 수업료 결제가 됩니다.<br />
 				<?php } ?>
 
 			</div>
 		</div>
 
+		<?php /*
 		<div class="line">
 			<div class="caption">결제형태</div>
 			<div class="text">
@@ -339,6 +344,7 @@ function show_receipt()
 
 				</div>
 			</div>
+*/?>
 
 		<?php /*
 
@@ -348,10 +354,13 @@ function show_receipt()
 		</div>
  */?>
 
+		<?php /*
 		<div class="line">
 			<div class="caption">주문번호</div>
 			<div class="text"><?php echo $rOrdNo?></div>
 		</div>
+ */?>
+
 
 
 		<?php /*
@@ -363,7 +372,7 @@ function show_receipt()
 
 
 		<div class="line">
-			<div class="caption">주문자 명</div>
+			<div class="caption">이름</div>
 			<div class="text"> <?php echo payment_get_user_name()?></div>
 		</div>
 
@@ -371,29 +380,31 @@ function show_receipt()
 
 
 		<div class="line">
-			<div class="caption">상품명</div>
+			<div class="caption">결제 상품</div>
 			<div class="text"><?php echo iconv('EUC-KR', 'UTF-8', $rProdNm)?></div>
 		</div>
 
 
 
 		<div class="line">
-			<div class="caption">결제금액</div>
+			<div class="caption">수업료</div>
 			<div class="text"><?php echo number_format($rAmt)?></div>
 		</div>
 
 
+
+		<?php /*
 		<?php if( $rSuccYn != "y") { ?>
 		<div class="line">
 			<div class="caption">성공여부</div>
 			<div class="text"><?php echo $rSuccYn?></div>
 		</div>
-
 		<div class="line">
 			<div class="caption">처리메세지</div>
-			<div class="text"><?php echo $rResMsg?></div>
+			<div class="text"><?php echo iconv('EUC-KR', 'UTF-8', $rResMsg)?></div>
 		</div>
 		<?php } ?>
+ */?>
 
 <?php if($AuthTy == "card" || $AuthTy == "virtual") {
 	/*
@@ -453,6 +464,9 @@ if($AuthTy == "iche" ) { ?>
 	<?php /*
 	<div class="line"><div class="caption">이지스에스크로(SEND_NO)</div><div class="text"><?=$ES_SENDNO?></div></div>
  */?>
+		<div class="virtual-desc">
+			위 은행으로 입금을 하시면 자동으로 수업료가 결제됩니다.
+		</div>
 <?php } ?>
 
 <?php if( $rSuccYn == 'y' && $AuthTy == "card" ) { ?>
