@@ -2,8 +2,8 @@
 /**
  *
  */
+header('Content-type: text/html; charset=euc-kr');
 global $payment;
-
 
 payment_begin_transaction();
 payment_log([
@@ -11,82 +11,80 @@ payment_log([
     'message' => 'Begin transaction'
 ]);
 
-if ( payment_check_input() ) {
+if ( $error = payment_check_input() ) {
     payment_log( [
         'action' => 'AGS_pay.php-payment-check-input-error',
         'message' => 'error on payment_check_input()'
     ] );
-    return;
+}
+else {
+    if ( $error = payment_insert_info() ) {
+        payment_log( [
+            'action' => 'AGS_pay.php-payment-insert-info-error',
+            'message' => 'failed on payment_insert_info()'
+        ] );
+    }
+    $AGS_HASHDATA = $payment['AGS_HASHDATA'];
 }
 
-if ( payment_insert_info() ) {
-
-    payment_log( [
-        'action' => 'AGS_pay.php-payment-insert-info-error',
-        'message' => 'failed on payment_insert_info()'
-    ] );
-
-    return;
-}
-
-
-
-
-$AGS_HASHDATA = $payment['AGS_HASHDATA'];
 ?>
+<!doctype html>
+<html>
+<head>
+    <meta charset="euc-kr">
 
 <script language=javascript>
     <!--
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Ïò¨ÎçîÍ≤åÏù¥Ìä∏ ÌîåÎü¨Í∑∏Ïù∏ ÏÑ§ÏπòÎ•º ÌôïÏù∏Ìï©ÎãàÎã§.
+    // ø√¥ı∞‘¿Ã∆Æ «√∑Ø±◊¿Œ º≥ƒ°∏¶ »Æ¿Œ«’¥œ¥Ÿ.
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
     function Pay(form){
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // MakePayMessage() Í∞Ä Ìò∏Ï∂úÎêòÎ©¥ Ïò¨ÎçîÍ≤åÏù¥Ìä∏ ÌîåÎü¨Í∑∏Ïù∏Ïù¥ ÌôîÎ©¥Ïóê ÎÇòÌÉÄÎÇòÎ©∞ Hidden ÌïÑÎìú
-        // Ïóê Î¶¨ÌÑ¥Í∞íÎì§Ïù¥ Ï±ÑÏõåÏßÄÍ≤å Îê©ÎãàÎã§.
+        // MakePayMessage() ∞° »£√‚µ«∏È ø√¥ı∞‘¿Ã∆Æ «√∑Ø±◊¿Œ¿Ã »≠∏Èø° ≥™≈∏≥™∏Á Hidden « µÂ
+        // ø° ∏Æ≈œ∞™µÈ¿Ã √§øˆ¡ˆ∞‘ µÀ¥œ¥Ÿ.
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         if(form.Flag.value == "enable"){
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // ÏûÖÎ†•Îêú Îç∞Ïù¥ÌÉÄÏùò Ïú†Ìö®ÏÑ±ÏùÑ Í≤ÄÏÇ¨Ìï©ÎãàÎã§.
+            // ¿‘∑¬µ» µ•¿Ã≈∏¿« ¿Ø»øº∫¿ª ∞ÀªÁ«’¥œ¥Ÿ.
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             if(Check_Common(form) == true){
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // Ïò¨ÎçîÍ≤åÏù¥Ìä∏ ÌîåÎü¨Í∑∏Ïù∏ ÏÑ§ÏπòÍ∞Ä Ïò¨Î∞îÎ•¥Í≤å ÎêòÏóàÎäîÏßÄ ÌôïÏù∏Ìï©ÎãàÎã§.
+                // ø√¥ı∞‘¿Ã∆Æ «√∑Ø±◊¿Œ º≥ƒ°∞° ø√πŸ∏£∞‘ µ«æ˙¥¬¡ˆ »Æ¿Œ«’¥œ¥Ÿ.
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 if(document.AGSPay == null || document.AGSPay.object == null){
-                    alert("ÌîåÎü¨Í∑∏Ïù∏ ÏÑ§Ïπò ÌõÑ Îã§Ïãú ÏãúÎèÑ ÌïòÏã≠ÏãúÏò§.");
+                    alert("«√∑Ø±◊¿Œ º≥ƒ° »ƒ ¥ŸΩ√ Ω√µµ «œΩ Ω√ø¿.");
                 }else{
                     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    // Ïò¨ÎçîÍ≤åÏù¥Ìä∏ ÌîåÎü¨Í∑∏Ïù∏ ÏÑ§Ï†ïÍ∞íÏùÑ ÎèôÏ†ÅÏúºÎ°ú Ï†ÅÏö©ÌïòÍ∏∞ JavaScript ÏΩîÎìúÎ•º ÏÇ¨Ïö©ÌïòÍ≥† ÏûàÏäµÎãàÎã§.
-                    // ÏÉÅÏ†êÏÑ§Ï†ïÏóê ÎßûÍ≤å JavaScript ÏΩîÎìúÎ•º ÏàòÏ†ïÌïòÏó¨ ÏÇ¨Ïö©ÌïòÏã≠ÏãúÏò§.
+                    // ø√¥ı∞‘¿Ã∆Æ «√∑Ø±◊¿Œ º≥¡§∞™¿ª µø¿˚¿∏∑Œ ¿˚øÎ«œ±‚ JavaScript ƒ⁄µÂ∏¶ ªÁøÎ«œ∞Ì ¿÷Ω¿¥œ¥Ÿ.
+                    // ªÛ¡°º≥¡§ø° ∏¬∞‘ JavaScript ƒ⁄µÂ∏¶ ºˆ¡§«œø© ªÁøÎ«œΩ Ω√ø¿.
                     //
-                    // [1] ÏùºÎ∞ò/Î¨¥Ïù¥Ïûê Í≤∞Ï†úÏó¨Î∂Ä
-                    // [2] ÏùºÎ∞òÍ≤∞Ï†úÏãú Ìï†Î∂ÄÍ∞úÏõîÏàò
-                    // [3] Î¨¥Ïù¥ÏûêÍ≤∞Ï†úÏãú Ìï†Î∂ÄÍ∞úÏõîÏàò ÏÑ§Ï†ï
-                    // [4] Ïù∏Ï¶ùÏó¨Î∂Ä
+                    // [1] ¿œπ›/π´¿Ã¿⁄ ∞·¡¶ø©∫Œ
+                    // [2] ¿œπ›∞·¡¶Ω√ «“∫Œ∞≥ø˘ºˆ
+                    // [3] π´¿Ã¿⁄∞·¡¶Ω√ «“∫Œ∞≥ø˘ºˆ º≥¡§
+                    // [4] ¿Œ¡ıø©∫Œ
                     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    // [1] ÏùºÎ∞ò/Î¨¥Ïù¥Ïûê Í≤∞Ï†úÏó¨Î∂ÄÎ•º ÏÑ§Ï†ïÌï©ÎãàÎã§.
+                    // [1] ¿œπ›/π´¿Ã¿⁄ ∞·¡¶ø©∫Œ∏¶ º≥¡§«’¥œ¥Ÿ.
                     //
-                    // Ìï†Î∂ÄÌåêÎß§Ïùò Í≤ΩÏö∞ Íµ¨Îß§ÏûêÍ∞Ä Ïù¥ÏûêÏàòÏàòÎ£åÎ•º Î∂ÄÎã¥ÌïòÎäî Í≤ÉÏù¥ Í∏∞Î≥∏ÏûÖÎãàÎã§. Í∑∏Îü¨ÎÇò,
-                    // ÏÉÅÏ†êÍ≥º Ïò¨ÎçîÍ≤åÏù¥Ìä∏Í∞ÑÏùò Î≥ÑÎèÑ Í≥ÑÏïΩÏùÑ ÌÜµÌï¥ÏÑú Ìï†Î∂ÄÏù¥ÏûêÎ•º ÏÉÅÏ†êÏ∏°ÏóêÏÑú Î∂ÄÎã¥Ìï† Ïàò ÏûàÏäµÎãàÎã§.
-                    // Ïù¥Í≤ΩÏö∞ Íµ¨Îß§ÏûêÎäî Î¨¥Ïù¥Ïûê Ìï†Î∂ÄÍ±∞ÎûòÍ∞Ä Í∞ÄÎä•Ìï©ÎãàÎã§.
+                    // «“∫Œ∆«∏≈¿« ∞ÊøÏ ±∏∏≈¿⁄∞° ¿Ã¿⁄ºˆºˆ∑·∏¶ ∫Œ¥„«œ¥¬ ∞Õ¿Ã ±‚∫ª¿‘¥œ¥Ÿ. ±◊∑Ø≥™,
+                    // ªÛ¡°∞˙ ø√¥ı∞‘¿Ã∆Æ∞£¿« ∫∞µµ ∞Ëæ‡¿ª ≈Î«ÿº≠ «“∫Œ¿Ã¿⁄∏¶ ªÛ¡°√¯ø°º≠ ∫Œ¥„«“ ºˆ ¿÷Ω¿¥œ¥Ÿ.
+                    // ¿Ã∞ÊøÏ ±∏∏≈¿⁄¥¬ π´¿Ã¿⁄ «“∫Œ∞≈∑°∞° ∞°¥…«’¥œ¥Ÿ.
                     //
-                    // ÏòàÏ†ú)
-                    // 	(1) ÏùºÎ∞òÍ≤∞Ï†úÎ°ú ÏÇ¨Ïö©Ìï† Í≤ΩÏö∞
+                    // øπ¡¶)
+                    // 	(1) ¿œπ›∞·¡¶∑Œ ªÁøÎ«“ ∞ÊøÏ
                     // 	form.DeviId.value = "9000400001";
                     //
-                    // 	(2) Î¨¥Ïù¥ÏûêÍ≤∞Ï†úÎ°ú ÏÇ¨Ïö©Ìï† Í≤ΩÏö∞
+                    // 	(2) π´¿Ã¿⁄∞·¡¶∑Œ ªÁøÎ«“ ∞ÊøÏ
                     // 	form.DeviId.value = "9000400002";
                     //
-                    // 	(3) ÎßåÏïΩ Í≤∞Ï†ú Í∏àÏï°Ïù¥ 100,000Ïõê ÎØ∏ÎßåÏùº Í≤ΩÏö∞ ÏùºÎ∞òÌï†Î∂ÄÎ°ú 100,000Ïõê Ïù¥ÏÉÅÏùº Í≤ΩÏö∞ Î¨¥Ïù¥ÏûêÌï†Î∂ÄÎ°ú ÏÇ¨Ïö©Ìï† Í≤ΩÏö∞
+                    // 	(3) ∏∏æ‡ ∞·¡¶ ±›æ◊¿Ã 100,000ø¯ πÃ∏∏¿œ ∞ÊøÏ ¿œπ›«“∫Œ∑Œ 100,000ø¯ ¿ÃªÛ¿œ ∞ÊøÏ π´¿Ã¿⁄«“∫Œ∑Œ ªÁøÎ«“ ∞ÊøÏ
                     // 	if(parseInt(form.Amt.value) < 100000)
                     //		form.DeviId.value = "9000400001";
                     // 	else
@@ -96,65 +94,65 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
                     form.DeviId.value = "9000400001";
 
                     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    // [2] ÏùºÎ∞ò Ìï†Î∂ÄÍ∏∞Í∞ÑÏùÑ ÏÑ§Ï†ïÌï©ÎãàÎã§.
+                    // [2] ¿œπ› «“∫Œ±‚∞£¿ª º≥¡§«’¥œ¥Ÿ.
                     //
-                    // ÏùºÎ∞ò Ìï†Î∂ÄÍ∏∞Í∞ÑÏùÄ 2 ~ 12Í∞úÏõîÍπåÏßÄ Í∞ÄÎä•Ìï©ÎãàÎã§.
-                    // 0:ÏùºÏãúÎ∂à, 2:2Í∞úÏõî, 3:3Í∞úÏõî, ... , 12:12Í∞úÏõî
+                    // ¿œπ› «“∫Œ±‚∞£¿∫ 2 ~ 12∞≥ø˘±Ó¡ˆ ∞°¥…«’¥œ¥Ÿ.
+                    // 0:¿œΩ√∫“, 2:2∞≥ø˘, 3:3∞≥ø˘, ... , 12:12∞≥ø˘
                     //
-                    // ÏòàÏ†ú)
-                    // 	(1) Ìï†Î∂ÄÍ∏∞Í∞ÑÏùÑ ÏùºÏãúÎ∂àÎßå Í∞ÄÎä•ÌïòÎèÑÎ°ù ÏÇ¨Ïö©Ìï† Í≤ΩÏö∞
+                    // øπ¡¶)
+                    // 	(1) «“∫Œ±‚∞£¿ª ¿œΩ√∫“∏∏ ∞°¥…«œµµ∑œ ªÁøÎ«“ ∞ÊøÏ
                     // 	form.QuotaInf.value = "0";
                     //
-                    // 	(2) Ìï†Î∂ÄÍ∏∞Í∞ÑÏùÑ ÏùºÏãúÎ∂à ~ 12Í∞úÏõîÍπåÏßÄ ÏÇ¨Ïö©Ìï† Í≤ΩÏö∞
+                    // 	(2) «“∫Œ±‚∞£¿ª ¿œΩ√∫“ ~ 12∞≥ø˘±Ó¡ˆ ªÁøÎ«“ ∞ÊøÏ
                     //		form.QuotaInf.value = "0:3:4:5:6:7:8:9:10:11:12";
                     //
-                    // 	(3) Í≤∞Ï†úÍ∏àÏï°Ïù¥ ÏùºÏ†ïÎ≤îÏúÑÏïàÏóê ÏûàÏùÑ Í≤ΩÏö∞ÏóêÎßå Ìï†Î∂ÄÍ∞Ä Í∞ÄÎä•ÌïòÍ≤å Ìï† Í≤ΩÏö∞
+                    // 	(3) ∞·¡¶±›æ◊¿Ã ¿œ¡§π¸¿ßæ»ø° ¿÷¿ª ∞ÊøÏø°∏∏ «“∫Œ∞° ∞°¥…«œ∞‘ «“ ∞ÊøÏ
                     // 	if((parseInt(form.Amt.value) >= 100000) || (parseInt(form.Amt.value) <= 200000))
                     // 		form.QuotaInf.value = "0:2:3:4:5:6:7:8:9:10:11:12";
                     // 	else
                     // 		form.QuotaInf.value = "0";
                     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                    //Í≤∞Ï†úÍ∏àÏï°Ïù¥ 5ÎßåÏõê ÎØ∏ÎßåÍ±¥ÏùÑ Ìï†Î∂ÄÍ≤∞Ï†úÎ°ú ÏöîÏ≤≠Ìï†Í≤ΩÏö∞ Í≤∞Ï†úÏã§Ìå®
+                    //∞·¡¶±›æ◊¿Ã 5∏∏ø¯ πÃ∏∏∞«¿ª «“∫Œ∞·¡¶∑Œ ø‰√ª«“∞ÊøÏ ∞·¡¶Ω«∆–
                     if(parseInt(form.Amt.value) < 50000)
                         form.QuotaInf.value = "0";
                     else
                         form.QuotaInf.value = "0:2:3:4:5:6:7:8:9:10:11:12";
 
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    // [3] Î¨¥Ïù¥Ïûê Ìï†Î∂ÄÍ∏∞Í∞ÑÏùÑ ÏÑ§Ï†ïÌï©ÎãàÎã§.
-                    // (ÏùºÎ∞òÍ≤∞Ï†úÏù∏ Í≤ΩÏö∞ÏóêÎäî Î≥∏ ÏÑ§Ï†ïÏùÄ Ï†ÅÏö©ÎêòÏßÄ ÏïäÏäµÎãàÎã§.)
+                    // [3] π´¿Ã¿⁄ «“∫Œ±‚∞£¿ª º≥¡§«’¥œ¥Ÿ.
+                    // (¿œπ›∞·¡¶¿Œ ∞ÊøÏø°¥¬ ∫ª º≥¡§¿∫ ¿˚øÎµ«¡ˆ æ Ω¿¥œ¥Ÿ.)
                     //
-                    // Î¨¥Ïù¥Ïûê Ìï†Î∂ÄÍ∏∞Í∞ÑÏùÄ 2 ~ 12Í∞úÏõîÍπåÏßÄ Í∞ÄÎä•ÌïòÎ©∞,
-                    // Ïò¨ÎçîÍ≤åÏù¥Ìä∏ÏóêÏÑú Ï†úÌïúÌïú Ìï†Î∂Ä Í∞úÏõîÏàòÍπåÏßÄÎßå ÏÑ§Ï†ïÌï¥Ïïº Ìï©ÎãàÎã§.
+                    // π´¿Ã¿⁄ «“∫Œ±‚∞£¿∫ 2 ~ 12∞≥ø˘±Ó¡ˆ ∞°¥…«œ∏Á,
+                    // ø√¥ı∞‘¿Ã∆Æø°º≠ ¡¶«—«— «“∫Œ ∞≥ø˘ºˆ±Ó¡ˆ∏∏ º≥¡§«ÿæﬂ «’¥œ¥Ÿ.
                     //
                     // 100:BC
-                    // 200:Íµ≠ÎØº
+                    // 200:±ππŒ
                     // 201:NH
-                    // 300:Ïô∏Ìôò
-                    // 310:ÌïòÎÇòSK
-                    // 400:ÏÇºÏÑ±
-                    // 500:Ïã†Ìïú
-                    // 800:ÌòÑÎåÄ
-                    // 900:Î°ØÎç∞
+                    // 300:ø‹»Ø
+                    // 310:«œ≥™SK
+                    // 400:ªÔº∫
+                    // 500:Ω≈«—
+                    // 800:«ˆ¥Î
+                    // 900:∑‘µ•
                     //
-                    // ÏòàÏ†ú)
-                    // 	(1) Î™®Îì† Ìï†Î∂ÄÍ±∞ÎûòÎ•º Î¨¥Ïù¥ÏûêÎ°ú ÌïòÍ≥† Ïã∂ÏùÑÎïåÏóêÎäî ALLÎ°ú ÏÑ§Ï†ï
+                    // øπ¡¶)
+                    // 	(1) ∏µÁ «“∫Œ∞≈∑°∏¶ π´¿Ã¿⁄∑Œ «œ∞Ì ΩÕ¿ª∂ßø°¥¬ ALL∑Œ º≥¡§
                     // 	form.NointInf.value = "ALL";
                     //
-                    // 	(2) Íµ≠ÎØºÏπ¥Îìú ÌäπÏ†ïÍ∞úÏõîÏàòÎßå Î¨¥Ïù¥ÏûêÎ•º ÌïòÍ≥† Ïã∂ÏùÑÍ≤ΩÏö∞ ÏÉòÌîå(2:3:4:5:6Í∞úÏõî)
+                    // 	(2) ±ππŒƒ´µÂ ∆Ø¡§∞≥ø˘ºˆ∏∏ π´¿Ã¿⁄∏¶ «œ∞Ì ΩÕ¿ª∞ÊøÏ ª˘«√(2:3:4:5:6∞≥ø˘)
                     // 	form.NointInf.value = "200-2:3:4:5:6";
                     //
-                    // 	(3) Ïô∏ÌôòÏπ¥Îìú ÌäπÏ†ïÍ∞úÏõîÏàòÎßå Î¨¥Ïù¥ÏûêÎ•º ÌïòÍ≥† Ïã∂ÏùÑÍ≤ΩÏö∞ ÏÉòÌîå(2:3:4:5:6Í∞úÏõî)
+                    // 	(3) ø‹»Øƒ´µÂ ∆Ø¡§∞≥ø˘ºˆ∏∏ π´¿Ã¿⁄∏¶ «œ∞Ì ΩÕ¿ª∞ÊøÏ ª˘«√(2:3:4:5:6∞≥ø˘)
                     // 	form.NointInf.value = "300-2:3:4:5:6";
                     //
-                    // 	(4) Íµ≠ÎØº,Ïô∏ÌôòÏπ¥Îìú ÌäπÏ†ïÍ∞úÏõîÏàòÎßå Î¨¥Ïù¥ÏûêÎ•º ÌïòÍ≥† Ïã∂ÏùÑÍ≤ΩÏö∞ ÏÉòÌîå(2:3:4:5:6Í∞úÏõî)
+                    // 	(4) ±ππŒ,ø‹»Øƒ´µÂ ∆Ø¡§∞≥ø˘ºˆ∏∏ π´¿Ã¿⁄∏¶ «œ∞Ì ΩÕ¿ª∞ÊøÏ ª˘«√(2:3:4:5:6∞≥ø˘)
                     // 	form.NointInf.value = "200-2:3:4:5:6,300-2:3:4:5:6";
                     //
-                    //	(5) Î¨¥Ïù¥Ïûê Ìï†Î∂ÄÍ∏∞Í∞Ñ ÏÑ§Ï†ïÏùÑ ÌïòÏßÄ ÏïäÏùÑ Í≤ΩÏö∞ÏóêÎäî NONEÎ°ú ÏÑ§Ï†ï
+                    //	(5) π´¿Ã¿⁄ «“∫Œ±‚∞£ º≥¡§¿ª «œ¡ˆ æ ¿ª ∞ÊøÏø°¥¬ NONE∑Œ º≥¡§
                     //	form.NointInf.value = "NONE";
                     //
-                    //	(6) Ï†ÑÏπ¥ÎìúÏÇ¨ ÌäπÏ†ïÍ∞úÏõîÏàòÎßå Î¨¥Ïù¥ÏûêÎ•º ÌïòÍ≥† Ïã∂ÏùÄÍ≤ΩÏö∞(2:3:6Í∞úÏõî)
+                    //	(6) ¿¸ƒ´µÂªÁ ∆Ø¡§∞≥ø˘ºˆ∏∏ π´¿Ã¿⁄∏¶ «œ∞Ì ΩÕ¿∫∞ÊøÏ(2:3:6∞≥ø˘)
                     //	form.NointInf.value = "100-2:3:6,200-2:3:6,201-2:3:6,300-2:3:6,310-2:3:6,400-2:3:6,500-2:3:6,800-2:3:6,900-2:3:6";
                     //
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -165,11 +163,11 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
 
                     if(MakePayMessage(form) == true){
                         Disable_Flag(form);
-                        // var openwin = window.open("AGS_progress.html","popup","width=300,height=160"); //"ÏßÄÎ∂àÏ≤òÎ¶¨Ï§ë"Ïù¥ÎùºÎäî ÌåùÏóÖÏ∞ΩÏó∞Í≤∞ Î∂ÄÎ∂Ñ
+                        // var openwin = window.open("AGS_progress.html","popup","width=300,height=160"); //"¡ˆ∫“√≥∏Æ¡ﬂ"¿Ã∂Û¥¬ ∆Àæ˜√¢ø¨∞· ∫Œ∫–
                         form.submit();
                     }
                     else{
-                        alert("ÏßÄÎ∂àÏóê Ïã§Ìå®ÌïòÏòÄÏäµÎãàÎã§.");// Ï∑®ÏÜåÏãú Ïù¥ÎèôÌéòÏù¥ÏßÄ ÏÑ§Ï†ïÎ∂ÄÎ∂Ñ
+                        alert("¡ˆ∫“ø° Ω«∆–«œø¥Ω¿¥œ¥Ÿ.");// √Îº“Ω√ ¿Ãµø∆‰¿Ã¡ˆ º≥¡§∫Œ∫–
                     }
                 }
             }
@@ -186,27 +184,27 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
 
     function Check_Common(form){
         if(form.StoreId.value == ""){
-            alert("ÏÉÅÏ†êÏïÑÏù¥ÎîîÎ•º ÏûÖÎ†•ÌïòÏã≠ÏãúÏò§.");
+            alert("ªÛ¡°æ∆¿Ãµ∏¶ ¿‘∑¬«œΩ Ω√ø¿.");
             return false;
         }
         else if(form.StoreNm.value == ""){
-            alert("ÏÉÅÏ†êÎ™ÖÏùÑ ÏûÖÎ†•ÌïòÏã≠ÏãúÏò§.");
+            alert("ªÛ¡°∏Ì¿ª ¿‘∑¬«œΩ Ω√ø¿.");
             return false;
         }
         else if(form.OrdNo.value == ""){
-            alert("Ï£ºÎ¨∏Î≤àÌò∏Î•º ÏûÖÎ†•ÌïòÏã≠ÏãúÏò§.");
+            alert("¡÷πÆπ¯»£∏¶ ¿‘∑¬«œΩ Ω√ø¿.");
             return false;
         }
         else if(form.ProdNm.value == ""){
-            alert("ÏÉÅÌíàÎ™ÖÏùÑ ÏûÖÎ†•ÌïòÏã≠ÏãúÏò§.");
+            alert("ªÛ«∞∏Ì¿ª ¿‘∑¬«œΩ Ω√ø¿.");
             return false;
         }
         else if(form.Amt.value == ""){
-            alert("Í∏àÏï°ÏùÑ ÏûÖÎ†•ÌïòÏã≠ÏãúÏò§.");
+            alert("±›æ◊¿ª ¿‘∑¬«œΩ Ω√ø¿.");
             return false;
         }
         else if(form.MallUrl.value == ""){
-            alert("ÏÉÅÏ†êURLÏùÑ ÏûÖÎ†•ÌïòÏã≠ÏãúÏò§.");
+            alert("ªÛ¡°URL¿ª ¿‘∑¬«œΩ Ω√ø¿.");
             return false;
         }
         return true;
@@ -242,42 +240,45 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
     }
     -->
 </script>
+</head>
+<body topmargin=0 leftmargin=0 rightmargin=0 bottommargin=0 onload="javascript:Enable_Flag(frmAGS_pay);">
 <section class="AGS_pay">
     <div>
-        <form name="frmAGS_pay" method=post action="<?php echo home_url()?>/enrollment?mode=AGS_pay_ing">
+        <form name="frmAGS_pay" method=post action="<?php echo home_url()?>/enrollment?mode=AGS_pay_ing" target="_parent">
+		<input type="hidden" name="layout" value="no">
             <input type="hidden" name="session_id" value="<?php echo $payment['session_id']?>">
             <input type="hidden" name="StoreId" maxlength=20 value="<?php echo $payment['allthegate_id']?>">
             <input type="hidden" name="OrdNo" maxlength=40 value="<?php echo $payment['ID']?>">
             <input type="hidden" name="Job" maxlength=12 value="<?php echo $payment['method']?>">
             <input type="hidden" name="Amt" maxlength=12 value="<?php echo $payment['amt']?>">
-            <input type="hidden" name="StoreNm" value="<?php echo $payment['company_name']?>">
+            <input type="hidden" name="StoreNm" value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['company_name'])?>">
             <input type="hidden" name="ProdNm" maxlength=300 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['allthegate_item_name'])?>">
             <input type="hidden" name="MallUrl" value="<?php echo $payment['MallUrl']?>">
             <input type="hidden" name="UserEmail" maxlength=50 value="<?php echo $payment['UserEmail']?>">
 
-            <!-- Í≤∞Ï†úÏ∞Ω Ï¢åÏ∏°ÏÉÅÎã®Ïóê ÏÉÅÏ†êÏùò Î°úÍ≥†Ïù¥ÎØ∏ÏßÄ(85 * 38)Î•º ÌëúÏãúÌï† Ïàò ÏûàÏäµÎãàÎã§.  ÏûòÎ™ªÎêú Í∞íÏùÑ ÏûÖÎ†•ÌïòÍ±∞ÎÇò ÎØ∏ÏûÖÎ†•Ïãú Ïù¥ÏßÄÏä§Ïò¨ÎçîÍ≤åÏù¥Ìä∏Ïùò Î°úÍ≥†Í∞Ä ÌëúÏãúÎê©ÎãàÎã§. -->
+            <!-- ∞·¡¶√¢ ¡¬√¯ªÛ¥‹ø° ªÛ¡°¿« ∑Œ∞Ì¿ÃπÃ¡ˆ(85 * 38)∏¶ «•Ω√«“ ºˆ ¿÷Ω¿¥œ¥Ÿ.  ¿ﬂ∏¯µ» ∞™¿ª ¿‘∑¬«œ∞≈≥™ πÃ¿‘∑¬Ω√ ¿Ã¡ˆΩ∫ø√¥ı∞‘¿Ã∆Æ¿« ∑Œ∞Ì∞° «•Ω√µÀ¥œ¥Ÿ. -->
             <input type="hidden" name=ags_logoimg_url maxlength=200 value="<?php echo $payment['ags_logoimg_url']?>">
 
-            <!-- Ï†úÎ™©ÏùÄ 1Ïª®ÌÖêÏ∏†Îãπ 5Ïûê Ïù¥ÎÇ¥Ïù¥Î©∞, ÏÉÅÏ†êÎ™Ö;ÏÉÅÌíàÎ™Ö;Í≤∞Ï†úÍ∏àÏï°;Ï†úÍ≥µÍ∏∞Í∞Ñ; ÏàúÏúºÎ°ú ÏûÖÎ†•Ìï¥ Ï£ºÏÖîÏïº Ìï©ÎãàÎã§. ÏûÖÎ†• Ïòà)ÏóÖÏ≤¥Î™Ö;ÌåêÎß§ÏÉÅÌíà;Í≥ÑÏÇ∞Í∏àÏï°;Ï†úÍ≥µÍ∏∞Í∞Ñ; -->
+            <!-- ¡¶∏Ò¿∫ 1ƒ¡≈Ÿ√˜¥Á 5¿⁄ ¿Ã≥ª¿Ã∏Á, ªÛ¡°∏Ì;ªÛ«∞∏Ì;∞·¡¶±›æ◊;¡¶∞¯±‚∞£; º¯¿∏∑Œ ¿‘∑¬«ÿ ¡÷º≈æﬂ «’¥œ¥Ÿ. ¿‘∑¬ øπ)æ˜√º∏Ì;∆«∏≈ªÛ«∞;∞ËªÍ±›æ◊;¡¶∞¯±‚∞£; -->
             <input type="hidden" name="SubjectData" value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['SubjectData'])?>">
             <input type="hidden" name="UserId" maxlength=20 value="<?php echo $payment['UserId']?>">
 
-            <!-- Ïπ¥Îìú & Í∞ÄÏÉÅ Í≥ÑÏ¢å Í≤∞Ïû¨ Ïö© Î≥ÄÏàò -->
-            <input type="hidden" name="OrdNm" maxlength=40 value="<?php echo payment_get_user_id() //iconv('UTF-8', 'EUC-KR', $payment['UserName'])?>"><!--Ï£ºÎ¨∏Ïûê Ïù¥Î¶Ñ-->
-            <input type="hidden" name="OrdPhone" maxlength=21 value="<?php echo $payment['UserPhone']?>"><!--Ï£ºÎ¨∏Ïûê Ïó∞ÎùΩÏ≤ò-->
-            <input type="hidden" name="OrdAddr" maxlength=100 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['UserAddress'])?>"><!--Ï£ºÎ¨∏Ïûê Ï£ºÏÜå-->
-            <input type="hidden" name="RcpNm" maxlength=40 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['RecvName'])?>"><!-- ÏàòÏßÑÏûêÎ™Ö-->
-            <input type="hidden" name="RcpPhone" maxlength=21 value="<?php echo $payment['RecvPhone']?>"><!-- ÏàòÏã†Ïûê Ïó∞ÎùΩÏ≤ò -->
-            <input type="hidden" name="DlvAddr" maxlength=100 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['RecvAddress'])?>"><!--Î∞∞ÏÜ°ÏßÄ Ï£ºÏÜå-->
-            <input type="hidden" name="Remark" maxlength=350 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['Remark'])?>"><!--Í∏∞ÌÉÄ ÏöîÍµ¨ÏÇ¨Ìï≠ -->
-            <input type=hidden style=width:300px name=CardSelect value=""><!--Ïπ¥ÎìúÏÇ¨ ÏÑ†ÌÉù : ÌäπÏ†ï Ïπ¥ÎìúÎßå ÏÇ¨Ïö©ÌïòÍ≥†Ïûê ÌïòÎäî Í≤ΩÏö∞. Îπà Í∞íÏùÑ ÏûÖÎ†•ÌïòÎ©¥ Î™®Îì† Ïπ¥ÎìúÏÇ¨ ÏÇ¨Ïö©. Ïπ¥ÎìúÏÇ¨ ÏΩîÎìúÎäî Îß§Îâ¥ÏñºÏóêÏÑú ÌôïÏù∏-->
-            <!-- EO Ïπ¥Îìú & Í∞ÄÏÉÅ Í≥ÑÏ¢å Í≤∞Ïû¨ Ïö© Î≥ÄÏàò -->
-            <!-- Í∞ÄÏÉÅÍ≥ÑÏ¢å Í≤∞Ï†ú Ïö© Î≥ÄÏàò -->
-            <input type="hidden" name="MallPage" value="<?php echo $payment['MallPage']?>"><!-- Í≤∞Ï†ú ÏûÖ/Ï∂úÍ∏à ÌÜµÎ≥¥ URL. ÎèÑÎ©îÏù∏ÏùÑ Ï†úÏô∏Ìïú ÎÇòÎ®∏ÏßÄ ÏûÖÎ†• -->
-            <input type="hidden" name="VIRTUAL_DEPODT" value=""><!-- ÏûÖÍ∏à Ï†úÌïú Ïùº. Î™áÏùºÍπåÏßÄ ÏûÖÍ∏àÌïòÎùºÎäî Í∏∞Í∞ÑÏùÑ Ï†ïÌï¥ Ï§å. ÏµúÎåÄ 15Ïùº. ÏÉùÎûµÌïòÎ©¥ Í∏∞Î≥∏ 5Ïùº. Ïòà) 20001122-->
+            <!-- ƒ´µÂ & ∞°ªÛ ∞Ë¡¬ ∞·¿Á øÎ ∫Øºˆ -->
+            <input type="hidden" name="OrdNm" maxlength=40 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['UserName'])?>"><!--¡÷πÆ¿⁄ ¿Ã∏ß-->
+            <input type="hidden" name="OrdPhone" maxlength=21 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['UserPhone'])?>"><!--¡÷πÆ¿⁄ ø¨∂Ù√≥-->
+            <input type="hidden" name="OrdAddr" maxlength=100 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['UserAddress'])?>"><!--¡÷πÆ¿⁄ ¡÷º“-->
+            <input type="hidden" name="RcpNm" maxlength=40 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['RecvName'])?>"><!-- ºˆ¡¯¿⁄∏Ì-->
+            <input type="hidden" name="RcpPhone" maxlength=21 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['RecvPhone'])?>"><!-- ºˆΩ≈¿⁄ ø¨∂Ù√≥ -->
+            <input type="hidden" name="DlvAddr" maxlength=100 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['RecvAddress'])?>"><!--πËº€¡ˆ ¡÷º“-->
+            <input type="hidden" name="Remark" maxlength=350 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['Remark'])?>..."><!--±‚≈∏ ø‰±∏ªÁ«◊ -->
+            <input type=hidden style=width:300px name=CardSelect value=""><!--ƒ´µÂªÁ º±≈√ : ∆Ø¡§ ƒ´µÂ∏∏ ªÁøÎ«œ∞Ì¿⁄ «œ¥¬ ∞ÊøÏ. ∫Û ∞™¿ª ¿‘∑¬«œ∏È ∏µÁ ƒ´µÂªÁ ªÁøÎ. ƒ´µÂªÁ ƒ⁄µÂ¥¬ ∏≈¥∫æÛø°º≠ »Æ¿Œ-->
+            <!-- EO ƒ´µÂ & ∞°ªÛ ∞Ë¡¬ ∞·¿Á øÎ ∫Øºˆ -->
+            <!-- ∞°ªÛ∞Ë¡¬ ∞·¡¶ øÎ ∫Øºˆ -->
+            <input type="hidden" name="MallPage" value="<?php echo $payment['MallPage']?>"><!-- ∞·¡¶ ¿‘/√‚±› ≈Î∫∏ URL. µµ∏ﬁ¿Œ¿ª ¡¶ø‹«— ≥™∏”¡ˆ ¿‘∑¬ -->
+            <input type="hidden" name="VIRTUAL_DEPODT" value=""><!-- ¿‘±› ¡¶«— ¿œ. ∏Ó¿œ±Ó¡ˆ ¿‘±›«œ∂Û¥¬ ±‚∞£¿ª ¡§«ÿ ¡‹. √÷¥Î 15¿œ. ª˝∑´«œ∏È ±‚∫ª 5¿œ. øπ) 20001122-->
 
 
-            <!-- Ìï∏ÎìúÌè∞ Í≤∞Ï†ú Ïö© Î≥ÄÏàò. Ìï∏ÎìúÌè∞ Í≤∞Ï†úÎ•º ÌïòÏßÄ ÏïäÎçîÎùºÎèÑ Í∞íÏùÑ ÎÑ£Ïñ¥ Ï§ÄÎã§. ÏïàÍ∑∏Îü¨Î©¥ PHP ÏóêÏÑú Î≥ÄÏàò Undefiend Í≤ΩÍ≥† ÏóêÎü¨Í∞Ä ÎÇúÎã§. -->
+            <!-- «⁄µÂ∆˘ ∞·¡¶ øÎ ∫Øºˆ. «⁄µÂ∆˘ ∞·¡¶∏¶ «œ¡ˆ æ ¥ı∂Ûµµ ∞™¿ª ≥÷æÓ ¡ÿ¥Ÿ. æ»±◊∑Ø∏È PHP ø°º≠ ∫Øºˆ Undefiend ∞Ê∞Ì ø°∑Ø∞° ≥≠¥Ÿ. -->
             <input type=hidden name=HP_ID maxlength=10 value="<?php echo $payment['allthegate_cp_id']?>">
             <input type=hidden name=HP_PWD maxlength=10 value="<?php echo $payment['allthegate_cp_pwd']?>">
             <input type=hidden name=HP_SUBID maxlength=10 value="<?php echo $payment['allthegate_sub_cp_id']?>">
@@ -285,91 +286,95 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
             <input type="hidden" name=HP_UNITType value="1">
 
 
-            <!-- Ïä§ÌÅ¨Î¶ΩÌä∏ Î∞è ÌîåÎü¨Í∑∏Ïù∏ÏóêÏÑú Í∞íÏùÑ ÏÑ§Ï†ïÌïòÎäî Hidden ÌïÑÎìú  !!ÏàòÏ†ïÏùÑ ÌïòÏãúÍ±∞ÎÇò ÏÇ≠Ï†úÌïòÏßÄ ÎßàÏã≠ÏãúÏò§-->
+            <!-- Ω∫≈©∏≥∆Æ π◊ «√∑Ø±◊¿Œø°º≠ ∞™¿ª º≥¡§«œ¥¬ Hidden « µÂ  !!ºˆ¡§¿ª «œΩ√∞≈≥™ ªË¡¶«œ¡ˆ ∏∂Ω Ω√ø¿-->
 
-            <!-- Í∞Å Í≤∞Ï†ú Í≥µÌÜµ ÏÇ¨Ïö© Î≥ÄÏàò -->
-            <input type=hidden name=Flag value="">				<!-- Ïä§ÌÅ¨Î¶ΩÌä∏Í≤∞Ï†úÏÇ¨Ïö©Íµ¨Î∂ÑÌîåÎûòÍ∑∏ -->
-            <input type=hidden name=AuthTy value="">			<!-- Í≤∞Ï†úÌòïÌÉú -->
-            <input type=hidden name=SubTy value="">				<!-- ÏÑúÎ∏åÍ≤∞Ï†úÌòïÌÉú -->
-            <input type=hidden name=AGS_HASHDATA value="<?php echo $AGS_HASHDATA?>">	<!-- ÏïîÌò∏Ìôî HASHDATA -->
+            <!-- ∞¢ ∞·¡¶ ∞¯≈Î ªÁøÎ ∫Øºˆ -->
+            <input type=hidden name=Flag value="">				<!-- Ω∫≈©∏≥∆Æ∞·¡¶ªÁøÎ±∏∫–«√∑°±◊ -->
+            <input type=hidden name=AuthTy value="">			<!-- ∞·¡¶«¸≈¬ -->
+            <input type=hidden name=SubTy value="">				<!-- º≠∫Í∞·¡¶«¸≈¬ -->
+            <input type=hidden name=AGS_HASHDATA value="<?php echo $AGS_HASHDATA?>">	<!-- æœ»£»≠ HASHDATA -->
 
-            <!-- Ïã†Ïö©Ïπ¥Îìú Í≤∞Ï†ú ÏÇ¨Ïö© Î≥ÄÏàò -->
-            <input type=hidden name=DeviId value="">			<!-- (Ïã†Ïö©Ïπ¥ÎìúÍ≥µÌÜµ)		Îã®ÎßêÍ∏∞ÏïÑÏù¥Îîî -->
-            <input type=hidden name=QuotaInf value="0">			<!-- (Ïã†Ïö©Ïπ¥ÎìúÍ≥µÌÜµ)		ÏùºÎ∞òÌï†Î∂ÄÍ∞úÏõîÏÑ§Ï†ïÎ≥ÄÏàò -->
-            <input type=hidden name=NointInf value="NONE">		<!-- (Ïã†Ïö©Ïπ¥ÎìúÍ≥µÌÜµ)		Î¨¥Ïù¥ÏûêÌï†Î∂ÄÍ∞úÏõîÏÑ§Ï†ïÎ≥ÄÏàò -->
-            <input type=hidden name=AuthYn value="">			<!-- (Ïã†Ïö©Ïπ¥ÎìúÍ≥µÌÜµ)		Ïù∏Ï¶ùÏó¨Î∂Ä -->
-            <input type=hidden name=Instmt value="">			<!-- (Ïã†Ïö©Ïπ¥ÎìúÍ≥µÌÜµ)		Ìï†Î∂ÄÍ∞úÏõîÏàò -->
-            <input type=hidden name=partial_mm value="">		<!-- (ISPÏÇ¨Ïö©)			ÏùºÎ∞òÌï†Î∂ÄÍ∏∞Í∞Ñ -->
-            <input type=hidden name=noIntMonth value="">		<!-- (ISPÏÇ¨Ïö©)			Î¨¥Ïù¥ÏûêÌï†Î∂ÄÍ∏∞Í∞Ñ -->
-            <input type=hidden name=KVP_RESERVED1 value="">		<!-- (ISPÏÇ¨Ïö©)			RESERVED1 -->
-            <input type=hidden name=KVP_RESERVED2 value="">		<!-- (ISPÏÇ¨Ïö©)			RESERVED2 -->
-            <input type=hidden name=KVP_RESERVED3 value="">		<!-- (ISPÏÇ¨Ïö©)			RESERVED3 -->
-            <input type=hidden name=KVP_CURRENCY value="">		<!-- (ISPÏÇ¨Ïö©)			ÌÜµÌôîÏΩîÎìú -->
-            <input type=hidden name=KVP_CARDCODE value="">		<!-- (ISPÏÇ¨Ïö©)			Ïπ¥ÎìúÏÇ¨ÏΩîÎìú -->
-            <input type=hidden name=KVP_SESSIONKEY value="">	<!-- (ISPÏÇ¨Ïö©)			ÏïîÌò∏ÌôîÏΩîÎìú -->
-            <input type=hidden name=KVP_ENCDATA value="">		<!-- (ISPÏÇ¨Ïö©)			ÏïîÌò∏ÌôîÏΩîÎìú -->
-            <input type=hidden name=KVP_CONAME value="">		<!-- (ISPÏÇ¨Ïö©)			Ïπ¥ÎìúÎ™Ö -->
-            <input type=hidden name=KVP_NOINT value="">			<!-- (ISPÏÇ¨Ïö©)			Î¨¥Ïù¥Ïûê/ÏùºÎ∞òÏó¨Î∂Ä(Î¨¥Ïù¥Ïûê=1, ÏùºÎ∞ò=0) -->
-            <input type=hidden name=KVP_QUOTA value="">			<!-- (ISPÏÇ¨Ïö©)			Ìï†Î∂ÄÍ∞úÏõî -->
-            <input type=hidden name=CardNo value="">			<!-- (ÏïàÏã¨ÌÅ¥Î¶≠,ÏùºÎ∞òÏÇ¨Ïö©)	Ïπ¥ÎìúÎ≤àÌò∏ -->
-            <input type=hidden name=MPI_CAVV value="">			<!-- (ÏïàÏã¨ÌÅ¥Î¶≠,ÏùºÎ∞òÏÇ¨Ïö©)	ÏïîÌò∏ÌôîÏΩîÎìú -->
-            <input type=hidden name=MPI_ECI value="">			<!-- (ÏïàÏã¨ÌÅ¥Î¶≠,ÏùºÎ∞òÏÇ¨Ïö©)	ÏïîÌò∏ÌôîÏΩîÎìú -->
-            <input type=hidden name=MPI_MD64 value="">			<!-- (ÏïàÏã¨ÌÅ¥Î¶≠,ÏùºÎ∞òÏÇ¨Ïö©)	ÏïîÌò∏ÌôîÏΩîÎìú -->
-            <input type=hidden name=ExpMon value="">			<!-- (ÏùºÎ∞òÏÇ¨Ïö©)			Ïú†Ìö®Í∏∞Í∞Ñ(Ïõî) -->
-            <input type=hidden name=ExpYear value="">			<!-- (ÏùºÎ∞òÏÇ¨Ïö©)			Ïú†Ìö®Í∏∞Í∞Ñ(ÎÖÑ) -->
-            <input type=hidden name=Passwd value="">			<!-- (ÏùºÎ∞òÏÇ¨Ïö©)			ÎπÑÎ∞ÄÎ≤àÌò∏ -->
-            <input type=hidden name=SocId value="">				<!-- (ÏùºÎ∞òÏÇ¨Ïö©)			Ï£ºÎØºÎì±Î°ùÎ≤àÌò∏/ÏÇ¨ÏóÖÏûêÎì±Î°ùÎ≤àÌò∏ -->
+            <!-- Ω≈øÎƒ´µÂ ∞·¡¶ ªÁøÎ ∫Øºˆ -->
+            <input type=hidden name=DeviId value="">			<!-- (Ω≈øÎƒ´µÂ∞¯≈Î)		¥‹∏ª±‚æ∆¿Ãµ -->
+            <input type=hidden name=QuotaInf value="0">			<!-- (Ω≈øÎƒ´µÂ∞¯≈Î)		¿œπ›«“∫Œ∞≥ø˘º≥¡§∫Øºˆ -->
+            <input type=hidden name=NointInf value="NONE">		<!-- (Ω≈øÎƒ´µÂ∞¯≈Î)		π´¿Ã¿⁄«“∫Œ∞≥ø˘º≥¡§∫Øºˆ -->
+            <input type=hidden name=AuthYn value="">			<!-- (Ω≈øÎƒ´µÂ∞¯≈Î)		¿Œ¡ıø©∫Œ -->
+            <input type=hidden name=Instmt value="">			<!-- (Ω≈øÎƒ´µÂ∞¯≈Î)		«“∫Œ∞≥ø˘ºˆ -->
+            <input type=hidden name=partial_mm value="">		<!-- (ISPªÁøÎ)			¿œπ›«“∫Œ±‚∞£ -->
+            <input type=hidden name=noIntMonth value="">		<!-- (ISPªÁøÎ)			π´¿Ã¿⁄«“∫Œ±‚∞£ -->
+            <input type=hidden name=KVP_RESERVED1 value="">		<!-- (ISPªÁøÎ)			RESERVED1 -->
+            <input type=hidden name=KVP_RESERVED2 value="">		<!-- (ISPªÁøÎ)			RESERVED2 -->
+            <input type=hidden name=KVP_RESERVED3 value="">		<!-- (ISPªÁøÎ)			RESERVED3 -->
+            <input type=hidden name=KVP_CURRENCY value="">		<!-- (ISPªÁøÎ)			≈Î»≠ƒ⁄µÂ -->
+            <input type=hidden name=KVP_CARDCODE value="">		<!-- (ISPªÁøÎ)			ƒ´µÂªÁƒ⁄µÂ -->
+            <input type=hidden name=KVP_SESSIONKEY value="">	<!-- (ISPªÁøÎ)			æœ»£»≠ƒ⁄µÂ -->
+            <input type=hidden name=KVP_ENCDATA value="">		<!-- (ISPªÁøÎ)			æœ»£»≠ƒ⁄µÂ -->
+            <input type=hidden name=KVP_CONAME value="">		<!-- (ISPªÁøÎ)			ƒ´µÂ∏Ì -->
+            <input type=hidden name=KVP_NOINT value="">			<!-- (ISPªÁøÎ)			π´¿Ã¿⁄/¿œπ›ø©∫Œ(π´¿Ã¿⁄=1, ¿œπ›=0) -->
+            <input type=hidden name=KVP_QUOTA value="">			<!-- (ISPªÁøÎ)			«“∫Œ∞≥ø˘ -->
+            <input type=hidden name=CardNo value="">			<!-- (æ»Ω…≈¨∏Ø,¿œπ›ªÁøÎ)	ƒ´µÂπ¯»£ -->
+            <input type=hidden name=MPI_CAVV value="">			<!-- (æ»Ω…≈¨∏Ø,¿œπ›ªÁøÎ)	æœ»£»≠ƒ⁄µÂ -->
+            <input type=hidden name=MPI_ECI value="">			<!-- (æ»Ω…≈¨∏Ø,¿œπ›ªÁøÎ)	æœ»£»≠ƒ⁄µÂ -->
+            <input type=hidden name=MPI_MD64 value="">			<!-- (æ»Ω…≈¨∏Ø,¿œπ›ªÁøÎ)	æœ»£»≠ƒ⁄µÂ -->
+            <input type=hidden name=ExpMon value="">			<!-- (¿œπ›ªÁøÎ)			¿Ø»ø±‚∞£(ø˘) -->
+            <input type=hidden name=ExpYear value="">			<!-- (¿œπ›ªÁøÎ)			¿Ø»ø±‚∞£(≥‚) -->
+            <input type=hidden name=Passwd value="">			<!-- (¿œπ›ªÁøÎ)			∫Òπ–π¯»£ -->
+            <input type=hidden name=SocId value="">				<!-- (¿œπ›ªÁøÎ)			¡÷πŒµÓ∑œπ¯»£/ªÁæ˜¿⁄µÓ∑œπ¯»£ -->
 
-            <!-- Í≥ÑÏ¢åÏù¥Ï≤¥ Í≤∞Ï†ú ÏÇ¨Ïö© Î≥ÄÏàò -->
-            <input type=hidden name=ICHE_OUTBANKNAME value="">	<!-- Ïù¥Ï≤¥Í≥ÑÏ¢åÏùÄÌñâÎ™Ö -->
-            <input type=hidden name=ICHE_OUTACCTNO value="">	<!-- Ïù¥Ï≤¥Í≥ÑÏ¢åÏòàÍ∏àÏ£ºÏ£ºÎØºÎ≤àÌò∏ -->
-            <input type=hidden name=ICHE_OUTBANKMASTER value=""><!-- Ïù¥Ï≤¥Í≥ÑÏ¢åÏòàÍ∏àÏ£º -->
-            <input type=hidden name=ICHE_AMOUNT value="">		<!-- Ïù¥Ï≤¥Í∏àÏï° -->
+            <!-- ∞Ë¡¬¿Ã√º ∞·¡¶ ªÁøÎ ∫Øºˆ -->
+            <input type=hidden name=ICHE_OUTBANKNAME value="">	<!-- ¿Ã√º∞Ë¡¬¿∫«‡∏Ì -->
+            <input type=hidden name=ICHE_OUTACCTNO value="">	<!-- ¿Ã√º∞Ë¡¬øπ±›¡÷¡÷πŒπ¯»£ -->
+            <input type=hidden name=ICHE_OUTBANKMASTER value=""><!-- ¿Ã√º∞Ë¡¬øπ±›¡÷ -->
+            <input type=hidden name=ICHE_AMOUNT value="">		<!-- ¿Ã√º±›æ◊ -->
 
-            <!-- Ìï∏ÎìúÌè∞ Í≤∞Ï†ú ÏÇ¨Ïö© Î≥ÄÏàò -->
-            <input type=hidden name=HP_SERVERINFO value="">		<!-- ÏÑúÎ≤ÑÏ†ïÎ≥¥ -->
-            <input type=hidden name=HP_HANDPHONE value="">		<!-- Ìï∏ÎìúÌè∞Î≤àÌò∏ -->
-            <input type=hidden name=HP_COMPANY value="">		<!-- ÌÜµÏã†ÏÇ¨Î™Ö(SKT,KTF,LGT) -->
-            <input type=hidden name=HP_IDEN value="">			<!-- Ïù∏Ï¶ùÏãúÏÇ¨Ïö© -->
-            <input type=hidden name=HP_IPADDR value="">			<!-- ÏïÑÏù¥ÌîºÏ†ïÎ≥¥ -->
+            <!-- «⁄µÂ∆˘ ∞·¡¶ ªÁøÎ ∫Øºˆ -->
+            <input type=hidden name=HP_SERVERINFO value="">		<!-- º≠πˆ¡§∫∏ -->
+            <input type=hidden name=HP_HANDPHONE value="">		<!-- «⁄µÂ∆˘π¯»£ -->
+            <input type=hidden name=HP_COMPANY value="">		<!-- ≈ÎΩ≈ªÁ∏Ì(SKT,KTF,LGT) -->
+            <input type=hidden name=HP_IDEN value="">			<!-- ¿Œ¡ıΩ√ªÁøÎ -->
+            <input type=hidden name=HP_IPADDR value="">			<!-- æ∆¿Ã««¡§∫∏ -->
 
-            <!-- ARS Í≤∞Ï†ú ÏÇ¨Ïö© Î≥ÄÏàò -->
-            <input type=hidden name=ARS_PHONE value="">			<!-- ARSÎ≤àÌò∏ -->
-            <input type=hidden name=ARS_NAME value="">			<!-- Ï†ÑÌôîÍ∞ÄÏûÖÏûêÎ™Ö -->
+            <!-- ARS ∞·¡¶ ªÁøÎ ∫Øºˆ -->
+            <input type=hidden name=ARS_PHONE value="">			<!-- ARSπ¯»£ -->
+            <input type=hidden name=ARS_NAME value="">			<!-- ¿¸»≠∞°¿‘¿⁄∏Ì -->
 
-            <!-- Í∞ÄÏÉÅÍ≥ÑÏ¢å Í≤∞Ï†ú ÏÇ¨Ïö© Î≥ÄÏàò -->
-            <input type=hidden name=ZuminCode value="">			<!-- Í∞ÄÏÉÅÍ≥ÑÏ¢åÏûÖÍ∏àÏûêÏ£ºÎØºÎ≤àÌò∏ -->
-            <input type=hidden name=VIRTUAL_CENTERCD value="">	<!-- Í∞ÄÏÉÅÍ≥ÑÏ¢åÏùÄÌñâÏΩîÎìú -->
-            <input type=hidden name=VIRTUAL_NO value="">		<!-- Í∞ÄÏÉÅÍ≥ÑÏ¢åÎ≤àÌò∏ -->
+            <!-- ∞°ªÛ∞Ë¡¬ ∞·¡¶ ªÁøÎ ∫Øºˆ -->
+            <input type=hidden name=ZuminCode value="">			<!-- ∞°ªÛ∞Ë¡¬¿‘±›¿⁄¡÷πŒπ¯»£ -->
+            <input type=hidden name=VIRTUAL_CENTERCD value="">	<!-- ∞°ªÛ∞Ë¡¬¿∫«‡ƒ⁄µÂ -->
+            <input type=hidden name=VIRTUAL_NO value="">		<!-- ∞°ªÛ∞Ë¡¬π¯»£ -->
 
             <input type=hidden name=mTId value="">
 
-            <!-- ÏóêÏä§ÌÅ¨Î°ú Í≤∞Ï†ú ÏÇ¨Ïö© Î≥ÄÏàò -->
-            <input type=hidden name=ES_SENDNO value="">			<!-- ÏóêÏä§ÌÅ¨Î°úÏ†ÑÎ¨∏Î≤àÌò∏ -->
+            <!-- ø°Ω∫≈©∑Œ ∞·¡¶ ªÁøÎ ∫Øºˆ -->
+            <input type=hidden name=ES_SENDNO value="">			<!-- ø°Ω∫≈©∑Œ¿¸πÆπ¯»£ -->
 
-            <!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) Í≤∞Ï†ú ÏÇ¨Ïö© Î≥ÄÏàò -->
-            <input type=hidden name=ICHE_SOCKETYN value="">		<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) ÏÇ¨Ïö© Ïó¨Î∂Ä -->
-            <input type=hidden name=ICHE_POSMTID value="">		<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) Ïù¥Ïö©Í∏∞Í¥ÄÏ£ºÎ¨∏Î≤àÌò∏ -->
-            <input type=hidden name=ICHE_FNBCMTID value="">		<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) FNBCÍ±∞ÎûòÎ≤àÌò∏ -->
-            <input type=hidden name=ICHE_APTRTS value="">		<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) Ïù¥Ï≤¥ ÏãúÍ∞Å -->
-            <input type=hidden name=ICHE_REMARK1 value="">		<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) Í∏∞ÌÉÄÏÇ¨Ìï≠1 -->
-            <input type=hidden name=ICHE_REMARK2 value="">		<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) Í∏∞ÌÉÄÏÇ¨Ìï≠2 -->
-            <input type=hidden name=ICHE_ECWYN value="">		<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) ÏóêÏä§ÌÅ¨Î°úÏó¨Î∂Ä -->
-            <input type=hidden name=ICHE_ECWID value="">		<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) ÏóêÏä§ÌÅ¨Î°úID -->
-            <input type=hidden name=ICHE_ECWAMT1 value="">		<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) ÏóêÏä§ÌÅ¨Î°úÍ≤∞Ï†úÍ∏àÏï°1 -->
-            <input type=hidden name=ICHE_ECWAMT2 value="">		<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) ÏóêÏä§ÌÅ¨Î°úÍ≤∞Ï†úÍ∏àÏï°2 -->
-            <input type=hidden name=ICHE_CASHYN value="">		<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) ÌòÑÍ∏àÏòÅÏàòÏ¶ùÎ∞úÌñâÏó¨Î∂Ä -->
-            <input type=hidden name=ICHE_CASHGUBUN_CD value="">	<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) ÌòÑÍ∏àÏòÅÏàòÏ¶ùÍµ¨Î∂Ñ -->
-            <input type=hidden name=ICHE_CASHID_NO value="">	<!-- Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) ÌòÑÍ∏àÏòÅÏàòÏ¶ùÏã†Î∂ÑÌôïÏù∏Î≤àÌò∏ -->
+            <!-- ∞Ë¡¬¿Ã√º(º“ƒœ) ∞·¡¶ ªÁøÎ ∫Øºˆ -->
+            <input type=hidden name=ICHE_SOCKETYN value="">		<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) ªÁøÎ ø©∫Œ -->
+            <input type=hidden name=ICHE_POSMTID value="">		<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) ¿ÃøÎ±‚∞¸¡÷πÆπ¯»£ -->
+            <input type=hidden name=ICHE_FNBCMTID value="">		<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) FNBC∞≈∑°π¯»£ -->
+            <input type=hidden name=ICHE_APTRTS value="">		<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) ¿Ã√º Ω√∞¢ -->
+            <input type=hidden name=ICHE_REMARK1 value="">		<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) ±‚≈∏ªÁ«◊1 -->
+            <input type=hidden name=ICHE_REMARK2 value="">		<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) ±‚≈∏ªÁ«◊2 -->
+            <input type=hidden name=ICHE_ECWYN value="">		<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) ø°Ω∫≈©∑Œø©∫Œ -->
+            <input type=hidden name=ICHE_ECWID value="">		<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) ø°Ω∫≈©∑ŒID -->
+            <input type=hidden name=ICHE_ECWAMT1 value="">		<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) ø°Ω∫≈©∑Œ∞·¡¶±›æ◊1 -->
+            <input type=hidden name=ICHE_ECWAMT2 value="">		<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) ø°Ω∫≈©∑Œ∞·¡¶±›æ◊2 -->
+            <input type=hidden name=ICHE_CASHYN value="">		<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) «ˆ±›øµºˆ¡ıπﬂ«‡ø©∫Œ -->
+            <input type=hidden name=ICHE_CASHGUBUN_CD value="">	<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) «ˆ±›øµºˆ¡ı±∏∫– -->
+            <input type=hidden name=ICHE_CASHID_NO value="">	<!-- ∞Ë¡¬¿Ã√º(º“ƒœ) «ˆ±›øµºˆ¡ıΩ≈∫–»Æ¿Œπ¯»£ -->
 
-            <!-- ÌÖîÎûòÎ±ÖÌÇπ-Í≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) Í≤∞Ï†ú ÏÇ¨Ïö© Î≥ÄÏàò -->
-            <input type=hidden name=ICHEARS_SOCKETYN value="">	<!-- ÌÖîÎ†àÎ±ÖÌÇπÍ≥ÑÏ¢åÏù¥Ï≤¥(ÏÜåÏºì) ÏÇ¨Ïö© Ïó¨Î∂Ä -->
-            <input type=hidden name=ICHEARS_ADMNO value="">		<!-- ÌÖîÎ†àÎ±ÖÌÇπÍ≥ÑÏ¢åÏù¥Ï≤¥ ÏäπÏù∏Î≤àÌò∏ -->
-            <input type=hidden name=ICHEARS_POSMTID value="">	<!-- ÌÖîÎ†àÎ±ÖÌÇπÍ≥ÑÏ¢åÏù¥Ï≤¥ Ïù¥Ïö©Í∏∞Í¥ÄÏ£ºÎ¨∏Î≤àÌò∏ -->
-            <input type=hidden name=ICHEARS_CENTERCD value="">	<!-- ÌÖîÎ†àÎ±ÖÌÇπÍ≥ÑÏ¢åÏù¥Ï≤¥ ÏùÄÌñâÏΩîÎìú -->
-            <input type=hidden name=ICHEARS_HPNO value="">		<!-- ÌÖîÎ†àÎ±ÖÌÇπÍ≥ÑÏ¢åÏù¥Ï≤¥ Ìú¥ÎåÄÌè∞Î≤àÌò∏ -->
+            <!-- ≈⁄∑°π≈∑-∞Ë¡¬¿Ã√º(º“ƒœ) ∞·¡¶ ªÁøÎ ∫Øºˆ -->
+            <input type=hidden name=ICHEARS_SOCKETYN value="">	<!-- ≈⁄∑ππ≈∑∞Ë¡¬¿Ã√º(º“ƒœ) ªÁøÎ ø©∫Œ -->
+            <input type=hidden name=ICHEARS_ADMNO value="">		<!-- ≈⁄∑ππ≈∑∞Ë¡¬¿Ã√º Ω¬¿Œπ¯»£ -->
+            <input type=hidden name=ICHEARS_POSMTID value="">	<!-- ≈⁄∑ππ≈∑∞Ë¡¬¿Ã√º ¿ÃøÎ±‚∞¸¡÷πÆπ¯»£ -->
+            <input type=hidden name=ICHEARS_CENTERCD value="">	<!-- ≈⁄∑ππ≈∑∞Ë¡¬¿Ã√º ¿∫«‡ƒ⁄µÂ -->
+            <input type=hidden name=ICHEARS_HPNO value="">		<!-- ≈⁄∑ππ≈∑∞Ë¡¬¿Ã√º »ﬁ¥Î∆˘π¯»£ -->
 
-            <!-- Ïä§ÌÅ¨Î¶ΩÌä∏ Î∞è ÌîåÎü¨Í∑∏Ïù∏ÏóêÏÑú Í∞íÏùÑ ÏÑ§Ï†ïÌïòÎäî Hidden ÌïÑÎìú  !!ÏàòÏ†ïÏùÑ ÌïòÏãúÍ±∞ÎÇò ÏÇ≠Ï†úÌïòÏßÄ ÎßàÏã≠ÏãúÏò§-->
+            <!-- Ω∫≈©∏≥∆Æ π◊ «√∑Ø±◊¿Œø°º≠ ∞™¿ª º≥¡§«œ¥¬ Hidden « µÂ  !!ºˆ¡§¿ª «œΩ√∞≈≥™ ªË¡¶«œ¡ˆ ∏∂Ω Ω√ø¿-->
+
+            <div>ø°∑Ø: <?php echo $error ?></div>
+            <div>±›æ◊: <?php echo $payment['amt']?></div>
+            <input type="button" value="¡ˆ∫“ø‰√ª" onclick="javascript:Pay(frmAGS_pay);">
 
         </form>
 
@@ -384,14 +389,14 @@ $AGS_HASHDATA = $payment['AGS_HASHDATA'];
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
         </td>
         <td>
-        ÏöîÏ≤≠Ìïú Í≤∞Ï†ú Ï≤òÎ¶¨Ï§ëÏûÖÎãàÎã§.<br>
-        Ïû†ÏãúÎßå Í∏∞Îã§Î†§ Ï£ºÏÑ∏Ïöî.
+        ø‰√ª«— ∞·¡¶ √≥∏Æ¡ﬂ¿‘¥œ¥Ÿ.<br>
+        ¿·Ω√∏∏ ±‚¥Ÿ∑¡ ¡÷ººø‰.
         </td>
         </tr>
         </table>
         </div>
 
-        <a href="javascript:history.go(-1)">ÎèåÏïÑÍ∞ÄÍ∏∞</a>
+        <a href="javascript:history.go(-1)">µπæ∆∞°±‚</a>
          */
 
         ?>
@@ -407,13 +412,12 @@ payment_log( [
 ?>
 <script>
     <?php if ( PAYMENT_DEBUG && PAYMENT_DEBUG_NO_ACTIVEX ) { ?>
-    // PAYMENT_DEBUG_NO_ACTIVEX Ïù¥ Ï∞∏Ïù¥Î©¥ ActiveX Í≤∞Ï†ú ÌôïÏù∏ ÏÉùÎûµ.
+    // PAYMENT_DEBUG_NO_ACTIVEX ¿Ã ¬¸¿Ã∏È ActiveX ∞·¡¶ »Æ¿Œ ª˝∑´.
     frmAGS_pay.submit();
     <?php } else { ?>
-    /** ÌéòÏù¥ÏßÄ ÌïòÎã®Ïù¥ Î∞îÎ°ú Ï∂úÎ†•ÎêòÏßÄ ÏïäÍ∏∞ ÎïåÎ¨∏Ïóê, setTimeout() ÏùÑ Í±∏Ïñ¥ Ï§ÄÎã§. */
-    setTimeout(function(){
-        Enable_Flag(frmAGS_pay);
-        Pay(frmAGS_pay);
-    }, 100);
+	
     <?php } ?>
 </script>
+
+</body>
+</html>

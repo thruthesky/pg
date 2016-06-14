@@ -12,7 +12,8 @@
 
  */
 ?>
-<script language=javascript src="http://www.allthegate.com/plugin/AGSWallet_utf8.js"></script>
+<!--script language=javascript src="http://www.allthegate.com/plugin/AGSWallet_utf8.js"></script-->
+<script language=javascript src="http://www.allthegate.com/plugin/AGSWallet.js"></script>
 <script>
     StartSmartUpdate();
 </script>

@@ -372,14 +372,14 @@ function show_receipt()
 
 		<div class="line">
 			<div class="caption">상품명</div>
-			<div class="text"><?php echo $rProdNm?></div>
+			<div class="text"><?php echo iconv('EUC-KR', 'UTF-8', $rProdNm)?></div>
 		</div>
 
 
 
 		<div class="line">
 			<div class="caption">결제금액</div>
-			<div class="text"><?php echo $rAmt?></div>
+			<div class="text"><?php echo number_format($rAmt)?></div>
 		</div>
 
 
@@ -427,7 +427,7 @@ function show_receipt()
 if($AuthTy == "iche" ) { ?>
 	<div class="line"><div class="caption">이체계좌은행명</div><div class="text"><?php echo $ICHE_OUTBANKNAME?><?php echo getCenter_cd($ICHE_OUTBANKNAME)?></div></div>
 	<div class="line"><div class="caption">이체금액</div><div class="text"><?php echo $ICHE_AMOUNT?></div></div>
-	<div class="line"><div class="caption">이체계좌소유주</div><div class="text"><?php echo $ICHE_OUTBANKMASTER?></div></div>
+	<div class="line"><div class="caption">이체계좌소유주</div><div class="text"><?php echo iconv('EUC-KR', 'UTF-8', $ICHE_OUTBANKMASTER)?></div></div>
 	<?php /*
 	<div class="line"><div class="caption">이지스에스크로(SEND_NO)</div><div class="text"><?php echo $ES_SENDNO?></div></div>
  */?>

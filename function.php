@@ -1,12 +1,12 @@
 <?php
 /**
  * @file function.php
- * @desc ê¸°ë³¸ í•¨ìˆ˜ ë¼ì´ë¸ŒëŸ¬ë¦¬
+ * @desc ±âº» ÇÔ¼ö ¶óÀÌºê·¯¸®
  */
 
 
 /**
- * ëœë¤ ë¬¸ìì—´ì„ ë¦¬í„´í•œë‹¤.
+ * ·£´ı ¹®ÀÚ¿­À» ¸®ÅÏÇÑ´Ù.
  *
  * @return string
  */
@@ -16,11 +16,11 @@ function payment_random_string() {
 
 
 /**
- * ì´ í•¨ìˆ˜ëŠ” ê²°ì œ ê³¼ì •ì˜ ì²˜ìŒ ë¶€ë¶„ì—ì„œ í˜¸ì¶œí•˜ë©´ ëœë‹¤.
+ * ÀÌ ÇÔ¼ö´Â °áÁ¦ °úÁ¤ÀÇ Ã³À½ ºÎºĞ¿¡¼­ È£ÃâÇÏ¸é µÈ´Ù.
  *
- * ê³ ìœ í•œ ëœë¤ ë¬¸ìì—´ì„ ë§Œë“¤ì–´ì„œ $payment['session_id'] ë¡œ ë³´ê´€í•œë‹¤.
+ * °íÀ¯ÇÑ ·£´ı ¹®ÀÚ¿­À» ¸¸µé¾î¼­ $payment['session_id'] ·Î º¸°üÇÑ´Ù.
  *
- * ì´ë ‡ê²Œ í•˜ë¯€ë¡œì„œ ì‹œì‘ë¶€í„° ëê°€ì§€ ê³ ìœ í•œ session_id ë¡œ ë¡œê·¸ ì¶”ì ì´ë‚˜ ë‹¨ê³„ ì¶”ì ì´ ê°€ëŠ¥í•˜ë‹¤.
+ * ÀÌ·¸°Ô ÇÏ¹Ç·Î¼­ ½ÃÀÛºÎÅÍ ³¡°¡Áö °íÀ¯ÇÑ session_id ·Î ·Î±× ÃßÀûÀÌ³ª ´Ü°è ÃßÀûÀÌ °¡´ÉÇÏ´Ù.
  *
  *
  */
@@ -32,13 +32,13 @@ function payment_begin_transaction() {
 
 /**
  *
- * AGS_pay.php ì—ì„œ payment_begin_transaction() í˜¸ì¶œë¡œ session_id ë¥¼ ë§Œë“ ë‹¤.
+ * AGS_pay.php ¿¡¼­ payment_begin_transaction() È£Ãâ·Î session_id ¸¦ ¸¸µç´Ù.
  *
- * ë‹¤ìŒ í˜ì´ì§€ë¡œ ì˜®ê¸¸ ë•Œ, FORM ìœ¼ë¡œ session_id ë¥¼ ë„˜ê¸°ê³ , ê·¸ í˜ì´ì§€ì—ì„œ payemnt_resume_transaction( session_id ) ë¡œ í•´ì„œ,
+ * ´ÙÀ½ ÆäÀÌÁö·Î ¿Å±æ ¶§, FORM À¸·Î session_id ¸¦ ³Ñ±â°í, ±× ÆäÀÌÁö¿¡¼­ payemnt_resume_transaction( session_id ) ·Î ÇØ¼­,
  *
- * ê²°ì œ ì •ë³´ë¥¼ ê³„ì† ì´ì–´ ê°ˆ ìˆ˜ ìˆë„ë¡ í•œë‹¤.
+ * °áÁ¦ Á¤º¸¸¦ °è¼Ó ÀÌ¾î °¥ ¼ö ÀÖµµ·Ï ÇÑ´Ù.
  *
- * ì¦‰, ì´ í•¨ìˆ˜ëŠ” ìƒˆë¡œìš´ í˜ì´ì§€ê°€ ì‹¤í–‰ ë  ë•Œ ë§ˆë‹¤, ì´ ê°’ì„ ì§€ì • í•˜ë©´ ëœë‹¤.
+ * Áï, ÀÌ ÇÔ¼ö´Â »õ·Î¿î ÆäÀÌÁö°¡ ½ÇÇà µÉ ¶§ ¸¶´Ù, ÀÌ °ªÀ» ÁöÁ¤ ÇÏ¸é µÈ´Ù.
  *
  * @param $session_id
  */
@@ -54,9 +54,9 @@ function payment_resume_transaction( $session_id ) {
 
 
 /**
- * ì˜¬ë”ê²Œì´íŠ¸ ê²°ì œ ì •ë³´ë¥¼ ë¡œë“œí•œë‹¤.
+ * ¿Ã´õ°ÔÀÌÆ® °áÁ¦ Á¤º¸¸¦ ·ÎµåÇÑ´Ù.
  *
- * @note ìƒì  ì•„ì´ë””, í•¸ë“œí° ê²°ì œ ì •ë³´ ë“±ì„ ë¡œë“œí•œë‹¤.
+ * @note »óÁ¡ ¾ÆÀÌµğ, ÇÚµåÆù °áÁ¦ Á¤º¸ µîÀ» ·ÎµåÇÑ´Ù.
  */
 function payment_load_allthegate_info() {
     global $payment;
@@ -85,9 +85,9 @@ function payment_load_allthegate_info() {
 
 /**
  *
- * ê° CMS ì˜ íšŒì› ë²ˆí˜¸ë¥¼ ë¦¬í„´í•œë‹¤.
+ * °¢ CMS ÀÇ È¸¿ø ¹øÈ£¸¦ ¸®ÅÏÇÑ´Ù.
  *
- * @return int - íšŒì›ë²ˆí˜¸
+ * @return int - È¸¿ø¹øÈ£
  *
  */
 function payment_get_user_no() {
@@ -130,32 +130,29 @@ function payment_get_user_address() {
 
 
 /**
- * ê²°ì œ í¼ ë³€ìˆ˜ ì…ë ¥ ê°’ ì²´í¬
+ * °áÁ¦ Æû º¯¼ö ÀÔ·Â °ª Ã¼Å©
  *
- * @return int - ì„±ê³µì´ë©´ 0 ì„ ë¦¬í„´.
+ * @return int - ¼º°øÀÌ¸é 0 À» ¸®ÅÏ.
  */
 function payment_check_input() {
 
     global $payment;
 
-
     // min & amount
     if ( isset($_REQUEST['amount']) && $_REQUEST['amount'] ) {
         $payment['amt'] = $_REQUEST['amount'];
     }
-    else if ( isset($_REQUEST['amount_input']) || $_REQUEST['amount_input'] ) {
+    else if ( isset($_REQUEST['amount_input']) && $_REQUEST['amount_input'] ) {
         $payment['amt'] = $_REQUEST['amount_input'];
     }
     else {
-        jsAlert("ìˆ˜ì—… ë˜ëŠ” ìˆ˜ì—…ë£Œë¥¼ ì„ íƒ(ì…ë ¥)í•˜ì‹­ì‹œì˜¤.");
-        return -1;
+        return "¼ö¾÷ ¶Ç´Â ¼ö¾÷·á¸¦ ¼±ÅÃ(ÀÔ·Â)ÇÏ½Ê½Ã¿À.";
     }
 
 
 // payment method
     if ( ! isset( $_REQUEST['method'] ) || empty($_REQUEST['method']) ) {
-        jsAlert("ê²°ì¬ ë°©ì‹ì„ ì„ íƒí•˜ì‹­ì‹œì˜¤.");
-        return -2;
+        return "°áÀç ¹æ½ÄÀ» ¼±ÅÃÇÏ½Ê½Ã¿À.";
     }
     $payment['method'] = $_REQUEST['method'];
 
@@ -164,18 +161,19 @@ function payment_check_input() {
 
 
     $date = date("Y-m");
-    $payment['SubjectData'] = "$payment[company_name];$payment[allthegate_item_name];$payment[amt];$date"; //ì—…ì²´ëª…;íŒë§¤ìƒí’ˆ;ê³„ì‚°ê¸ˆì•¡;2012.09.01 ~ 2012.09.30;
+    $item = str_replace(' ', '', $payment['allthegate_item_name']);
+    $payment['SubjectData'] = "$payment[company_name];$item;$payment[amt];$date"; //¾÷Ã¼¸í;ÆÇ¸Å»óÇ°;°è»ê±İ¾×;2012.09.01 ~ 2012.09.30;
     $payment['UserId'] = payment_get_user_id();
 
     return 0;
 }
 
 /**
- * ì‚¬ìš©ì ê²°ì œ ì •ë³´ë¥¼ ë°ì´í„°ë² ì´ìŠ¤ ì €ì¥í•œë‹¤.
+ * »ç¿ëÀÚ °áÁ¦ Á¤º¸¸¦ µ¥ÀÌÅÍº£ÀÌ½º ÀúÀåÇÑ´Ù.
  *
- * @note ì €ì¥í•˜ê³  í…Œì´ë¸”ì˜ ID ê°’ì„ $GLOBALS[payment][ID] ì— ì €ì¥í•œë‹¤.
+ * @note ÀúÀåÇÏ°í Å×ÀÌºíÀÇ ID °ªÀ» $GLOBALS[payment][ID] ¿¡ ÀúÀåÇÑ´Ù.
  *
- * @return int - ì„±ê³µì´ë©´ 0, ì—ëŸ¬ì´ë©´ ì°¸.
+ * @return int - ¼º°øÀÌ¸é 0, ¿¡·¯ÀÌ¸é Âü.
  */
 function payment_insert_info() {
     global $payment;
@@ -200,8 +198,7 @@ function payment_insert_info() {
         $re = $wpdb->query( $prepare );
 
         if ( $re === false ) {
-            jsAlert("Error on inserting payment information");
-            return -4002;
+            return "Error on inserting payment information";
         }
         $payment['ID'] = $wpdb->insert_id;
         $payment['AGS_HASHDATA'] = md5($payment['allthegate_id'] . $payment['ID'] . $payment['amt']);
@@ -216,8 +213,8 @@ function payment_list() {
 
 
 /**
- * ê²°ì œ ë¡œê·¸ë¥¼ ê¸°ë¡í•œë‹¤.
- * @return int - ì„±ê³µì´ë©´ 0. ì‹¤íŒ¨ë©´ ì°¸.
+ * °áÁ¦ ·Î±×¸¦ ±â·ÏÇÑ´Ù.
+ * @return int - ¼º°øÀÌ¸é 0. ½ÇÆĞ¸é Âü.
  */
 function payment_insert_log( $data ) {
     global $wpdb, $payment;
