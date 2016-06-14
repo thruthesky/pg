@@ -393,7 +393,7 @@ function show_receipt()
 
 
 
-		<?php /*
+
 		<?php if( $rSuccYn != "y") { ?>
 		<div class="line">
 			<div class="caption">성공여부</div>
@@ -404,7 +404,8 @@ function show_receipt()
 			<div class="text"><?php echo iconv('EUC-KR', 'UTF-8', $rResMsg)?></div>
 		</div>
 		<?php } ?>
- */?>
+
+
 
 <?php if($AuthTy == "card" || $AuthTy == "virtual") {
 	/*
@@ -455,7 +456,8 @@ if($AuthTy == "iche" ) { ?>
 		<div class="line"><div class="caption">ARS결제전화번호</div><div class="text"><?php echo $rARS_PHONE?></div></div>
 	<div class="line"><div class="caption">ARS결제통신사명</div><div class="text"><?php echo $rHP_COMPANY?></div></div>
 <?php } ?>
-<?php if($AuthTy == "virtual" ) { ?>
+
+<?php if( $rSuccYn == 'y' && $AuthTy == "virtual" ) { ?>
 	<div class="line"><div class="caption">입금계좌번호</div><div class="text"><?php echo $rVirNo?></div></div>
 	<!-- 은행코드(20) : 우리은행 -->
 	<div class="line"><div class="caption">입금은행</div><div class="text"><?php echo getCenter_cd($VIRTUAL_CENTERCD)?></div></div>
