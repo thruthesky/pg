@@ -30,15 +30,26 @@ foreach( $rows as $row ) {
     $date = date("Y-m-d h:i a", $row['stamp_finish']);
     $method = $data['AuthTy'];
     $Storeid = get_opt('lms[allthegate_id]');
-    if ( $method == 'card' ) $print_receipt = <<<EOS
+    if ( $row['method'] == 'onlycardselfnormal' || $method == 'card' ) {
+	$method = '신용카드';
+$print_receipt = <<<EOS
 <a href="javascript:show_receipt('$data[rApprTm]', '$Storeid', '$data[rApprNo]', '$data[rDealNo]');">
 Print Receipt
 </a>
 EOS;
+}
+
+    else if ( $row['method'] == 'onlyicheselfnormal' ) {
+		$method = '계좌이체';
+	}
+    else if ( $row['method'] == 'onlyvirtualselfnormal' ) {
+		$method = '1회용 무통장';
+}
 
     else $print_receipt = '';
     echo "
     <div class='line'>
+	$row[id] :
     $date
     $row[amount]
     $method $print_receipt
