@@ -45,7 +45,7 @@ else {
 
 
         var error = "<?php echo $error ?>";
-        if ( error ) {
+        if ( error && error != 0 ) {
             alert( error  );
             return;
         }
