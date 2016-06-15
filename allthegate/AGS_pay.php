@@ -409,8 +409,16 @@ else {
                 }
             </style>
             <nav class="pay-buttons">
-                <div class="total"><?php _text('Payment Total : ')?> <?php echo number_format($payment['amt'])?></div>
-                <div class="pay-button"><input type="button" value="<?php _text('Pay Now')?>" onclick="javascript:Pay(frmAGS_pay);"></div>
+                <?php
+                ob_start();
+                _text('Payment Total : ');
+                $total = ob_get_clean();
+                ob_start();
+                _text('Pay Now');
+                $pay_now = ob_get_clean();
+                ?>
+                <div class="total"><?php echo iconv('UTF-8', 'EUC-KR', $total)?> <?php echo number_format($payment['amt'])?></div>
+                <div class="pay-button"><input type="button" value="<?php echo iconv('UTF-8', 'EUC-KR', $pay_now)?>" onclick="javascript:Pay(frmAGS_pay);"></div>
             </nav>
 
         </form>
