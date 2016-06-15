@@ -42,6 +42,14 @@ else {
 
 
     function Pay(form){
+
+
+        var error = "<?php echo $error ?>";
+        if ( error ) {
+            alert( error  );
+            return;
+        }
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // MakePayMessage() 가 호출되면 올더게이트 플러그인이 화면에 나타나며 Hidden 필드
         // 에 리턴값들이 채워지게 됩니다.
@@ -401,12 +409,8 @@ else {
                 }
             </style>
             <nav class="pay-buttons">
-                <?php if ( $error ) { ?>
-                    <div><?php echo $error ?></div>
-                <?php } ?>
-
                 <div class="total"><?php _text('Payment Total : ')?> <?php echo number_format($payment['amt'])?></div>
-            <div class="pay-button"><input type="button" value="<?php _text('Pay Now')?>" onclick="javascript:Pay(frmAGS_pay);"></div>
+                <div class="pay-button"><input type="button" value="<?php _text('Pay Now')?>" onclick="javascript:Pay(frmAGS_pay);"></div>
             </nav>
 
         </form>

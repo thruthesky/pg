@@ -146,8 +146,27 @@ function payment_check_input() {
         $payment['amt'] = $_REQUEST['amount_input'];
     }
     else {
+        $payment['amt'] = 0;
         return "수업 또는 수업료를 선택(입력)하십시오.";
     }
+
+    $org_amount = $payment['amt'];
+
+    // discount on days.
+    if ( isset($_REQUEST['days']) && $payment['amt'] ) {
+        if ( $_REQUEST['days'] == 4 ) $payment['amt'] = $payment['amt'] - ( $org_amount * 5 / 100 );
+        else if ( $_REQUEST['days'] == 3 ) $payment['amt'] = $payment['amt'] - ( $org_amount * 10 / 100 );
+    }
+
+    // discount on curriculum.
+    if ( isset($_REQUEST['curriculum']) && $payment['amt'] ) {
+        $arr = explode(':', $_REQUEST['curriculum']);
+        if ( $arr[0] ) {
+            $payment['amt'] = $payment['amt'] - ( $org_amount * $arr[0] / 100 );
+        }
+    }
+
+
 
 
 // payment method
