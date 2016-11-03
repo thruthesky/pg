@@ -37,7 +37,7 @@ class agspay40
 	* $READ_TIMEOUT : 데이터 수신 타임아웃 시간(초)
 	* 
 	***************************************************************************************/	
-	var $LOCALADDR = "220.85.12.3"; 
+	var $LOCALADDR = "121.133.126.1"; 
 	var $LOCALPORT = "29760"; 
 	var $ENCTYPE = 0; 
 	var $CONN_TIMEOUT = 10; 

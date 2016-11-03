@@ -152,11 +152,11 @@ function payment_check_input() {
 
     $org_amount = $payment['amt'];
 
-    // discount on days.
-    if ( isset($_REQUEST['days']) && $payment['amt'] ) {
-        if ( $_REQUEST['days'] == 4 ) $payment['amt'] = $payment['amt'] - ( $org_amount * 5 / 100 );
-        else if ( $_REQUEST['days'] == 3 ) $payment['amt'] = $payment['amt'] - ( $org_amount * 10 / 100 );
-    }
+    // discount on days. (disabled to remove discount)
+    //if ( isset($_REQUEST['days']) && $payment['amt'] ) {
+    //    if ( $_REQUEST['days'] == 4 ) $payment['amt'] = $payment['amt'] - ( $org_amount * 5 / 100 );
+    //    else if ( $_REQUEST['days'] == 3 ) $payment['amt'] = $payment['amt'] - ( $org_amount * 10 / 100 );
+    //}
 
     // discount on curriculum.
     if ( isset($_REQUEST['curriculum']) && $payment['amt'] ) {
