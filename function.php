@@ -72,6 +72,7 @@ function payment_load_allthegate_info() {
     $payment['allthegate_cp_code']                      = get_opt('lms[allthegate_cp_code]');
     $payment['allthegate_item_name']                    = get_opt('lms[allthegate_item_name]');
 
+    $payment['UserId'] = payment_get_user_id();
     $payment['UserName'] = payment_get_user_name();
     $payment['UserPhone'] = payment_get_user_phone();
     $payment['UserAddress'] = payment_get_user_address();
@@ -122,7 +123,7 @@ function payment_get_user_phone() {
 }
 function payment_get_user_address() {
     switch ( PAYMENT_CMS ) {
-        case 'wordpress'            : return '';
+        case 'wordpress'            : return '주소기입없음';
         default                     : return 0;
     }
 }
