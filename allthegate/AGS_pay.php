@@ -275,10 +275,10 @@ else {
             <!-- 카드 & 가상 계좌 결재 용 변수 -->
             <input type="hidden" name="OrdNm" maxlength=40 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['UserName'])?>"><!--주문자 이름-->
             <input type="hidden" name="OrdPhone" maxlength=21 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['UserPhone'])?>"><!--주문자 연락처-->
-            <input type="hidden" name="OrdAddr" maxlength=100 value="주문자 주소 <?php echo $payment['UserAddress']?>"><!--주문자 주소-->
+            <input type="hidden" name="OrdAddr" maxlength=100 value="<?php echo $payment['UserAddress']?>"><!--주문자 주소-->
             <input type="hidden" name="RcpNm" maxlength=40 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['RecvName'])?>"><!-- 수진자명-->
             <input type="hidden" name="RcpPhone" maxlength=21 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['RecvPhone'])?>"><!-- 수신자 연락처 -->
-            <input type="hidden" name="DlvAddr" maxlength=100 value="배송지 주소 <?php echo $payment['RecvAddress']?>"><!--배송지 주소-->
+            <input type="hidden" name="DlvAddr" maxlength=100 value="<?php echo $payment['RecvAddress']?>"><!--배송지 주소-->
             <input type="hidden" name="Remark" maxlength=350 value="<?php echo iconv('UTF-8', 'EUC-KR', $payment['Remark'])?>..."><!--기타 요구사항 -->
             <input type=hidden style=width:300px name=CardSelect value=""><!--카드사 선택 : 특정 카드만 사용하고자 하는 경우. 빈 값을 입력하면 모든 카드사 사용. 카드사 코드는 매뉴얼에서 확인-->
             <!-- EO 카드 & 가상 계좌 결재 용 변수 -->
