@@ -6,7 +6,7 @@ header('Content-type: text/html; charset=euc-kr');
 global $payment;
 
 payment_begin_transaction();
-di( $payment );
+
 payment_log([
     'action' => 'AGS_pay.php-payment_transaction_begin',
     'message' => 'Begin transaction'
